@@ -1,23 +1,3 @@
-/*
-  This example comes from a short article series in the Linux
-  Gazette by Richard A. Sevenich and Christopher Lopes, titled
-  "Compiler Construction Tools". The article series starts at
-
-  http://www.linuxgazette.com/issue39/sevenich.html
-
-  Small changes and updates to newest JFlex+Cup versions
-  by Gerwin Klein
-*/
-
-/*
-  Commented By: Christopher Lopes
-  File Name: lcalc.flex
-  To Create: > jflex lcalc.flex
-
-  and then after the parser is created
-  > javac Lexer.java
-*/
-
 /* --------------------------Usercode Section------------------------ */
 package com.werner.compiler.generated;
 
@@ -33,6 +13,9 @@ import java_cup.runtime.*;
 */
 %class Lexer
 
+/*
+   Make generated class public.
+ */
 %public
 
 /*
@@ -50,11 +33,6 @@ import java_cup.runtime.*;
 
 /*
   Declarations
-
-  Code between %{ and %}, both of which must be at the beginning of a
-  line, will be copied letter to letter into the lexer class source.
-  Here you declare member variables and functions that are used inside
-  scanner actions.
 */
 %{
     /* To create a new java_cup.runtime.Symbol with information about
@@ -89,12 +67,12 @@ WhiteSpace     = {LineTerminator} | [ \t\f]
 /* A literal integer is is a number beginning with a number between
    one and nine followed by zero or more numbers between zero and nine
    or just a zero.  */
-dec_int_lit = 0 | [1-9][0-9]*
+INT_LIT = 0 | [1-9][0-9]*
 
-/* A identifier integer is a word beginning a letter between A and
+/* A identifier is a word beginning a letter between A and
    Z, a and z, or an underscore followed by zero or more letters
    between A and Z, a and z, zero and nine, or an underscore. */
-dec_int_id = [A-Za-z_][A-Za-z_0-9]*
+IDENT = [A-Za-z_][A-Za-z_0-9]*
 
 %%
 /* ------------------------Lexical Rules Section---------------------- */
@@ -111,7 +89,7 @@ dec_int_id = [A-Za-z_][A-Za-z_0-9]*
 <YYINITIAL> {
 
     /* Return the token SEMI declared in the class sym that was found. */
-    ";"                { return symbol(sym.SEMI); }
+    ";"                { return symbol(sym.SEMICOLON); }
 
     /* Print the token found that was declared in the class sym and then
        return it. */
@@ -126,14 +104,14 @@ dec_int_id = [A-Za-z_][A-Za-z_0-9]*
        that represents an integer and the value of the integer that is
        held in the string yytext which will get turned into an integer
        before returning */
-    {dec_int_lit}      { System.out.print(yytext());
+    {INT_LIT}      { System.out.print(yytext());
                          return symbol(sym.NUMBER, new Integer(yytext())); }
 
     /* If an identifier is found print it out, return the token ID
        that represents an identifier and the default value one that is
        given to all identifiers. */
-    {dec_int_id}       { System.out.print(yytext());
-                         return symbol(sym.ID, new Integer(1));}
+    {IDENT}       { System.out.print(yytext());
+                         return symbol(sym.IDENT, new Integer(1));}
 
     /* Don't do anything if whitespace is found */
     {WhiteSpace}       { /* just skip what was found, do nothing */ }

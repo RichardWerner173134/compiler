@@ -15,16 +15,13 @@ import java.io.StringReader;
 public class App 
 {
     public static void main( String[] args ) throws FileNotFoundException {
-        System.out.println( "Hello World!" );
-
         Lexer lexer = new Lexer(new FileReader(args[0]));
         Parser parser = new Parser(lexer);
 
         try {
             Symbol parse = parser.parse();
             Object value = parse.value;
-
-            System.out.println("done");
+            int x = 0;
         } catch (Exception e) {
             e.printStackTrace();
         }

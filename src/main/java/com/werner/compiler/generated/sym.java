@@ -9,26 +9,28 @@ package com.werner.compiler.generated;
 public class sym {
   /* terminals */
   public static final int MINUS = 4;
-  public static final int IDENT = 10;
-  public static final int DIVIDE = 6;
-  public static final int NUMBER = 9;
+  public static final int SLASH = 6;
+  public static final int IDENT = 11;
+  public static final int NUMBER = 10;
+  public static final int STAR = 5;
   public static final int EOF = 0;
   public static final int PLUS = 3;
   public static final int error = 1;
   public static final int RPAREN = 8;
   public static final int SEMICOLON = 2;
-  public static final int TIMES = 5;
   public static final int LPAREN = 7;
+  public static final int ASGN = 9;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "SEMICOLON",
   "PLUS",
   "MINUS",
-  "TIMES",
-  "DIVIDE",
+  "STAR",
+  "SLASH",
   "LPAREN",
   "RPAREN",
+  "ASGN",
   "NUMBER",
   "IDENT"
   };

@@ -57,43 +57,60 @@ parser code {:
         report_error(message, info);
         System.exit(1);
     }
+
+    public void sayHi(){
+        System.out.println("hi there");
+    }
 :};
 
 /* ------------Declaration of Terminals and Non Terminals Section----------- */
 
-terminal                        SEMICOLON, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN;
-terminal            Integer     NUMBER, IDENT;
+terminal                        SEMICOLON, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN;
+terminal            Integer     NUMBER;
+terminal            String      IDENT;
 
 nonterminal         Integer     expr, term, factor;
-nonterminal         Object      expr_part;
+nonterminal         Object      program, statement_list, statement, assign_statement;
+nonterminal                     empty_statement;
 
 /* ----------------------------Grammar Section-------------------- */
 
-    expr_part ::= expr:e
-                 {: System.out.println(" = " + e); :}
-                 SEMICOLON
-                 ;
+    program             ::= statement_list
+                        ;
 
-    expr ::= expr:e PLUS term:t
-            {: RESULT = new Integer(e.intValue() + t.intValue()); :}
-            | expr:e MINUS term:t
-            {: RESULT = new Integer(e.intValue() - t.intValue()); :}
-            | term:t
-            {: RESULT = new Integer(t.intValue()); :}
-            ;
+    statement_list      ::= /* epsilon */
+                        |   statement_list statement;
 
-    term ::= term:t TIMES factor:f
-            {: RESULT = new Integer(t.intValue() * f.intValue()); :}
-            | term:t DIVIDE factor:f
-            {: RESULT = new Integer(t.intValue() / f.intValue()); :}
-            | factor:f
-            {: RESULT = new Integer(f.intValue()); :}
-            ;
+    statement           ::= assign_statement
+                        |   empty_statement
+                        ;
 
-    factor ::= NUMBER:n
-            {: RESULT = new Integer(n.intValue()); :}
-            | LPAREN expr:e RPAREN
-            {: RESULT = new Integer(e.intValue()); :}
-            | MINUS factor:f
-            {: RESULT = new Integer(f.intValue()); :}
-            ;
+    empty_statement     ::= SEMICOLON
+                        ;
+
+    assign_statement    ::= IDENT:i ASGN expr:e SEMICOLON
+                        ;
+
+    expr                ::= expr:e PLUS term:t
+                        {: RESULT = new Integer(e.intValue() + t.intValue()); :}
+                        |   expr:e MINUS term:t
+                        {: RESULT = new Integer(e.intValue() - t.intValue()); :}
+                        |   term:t
+                        {: RESULT = new Integer(t.intValue()); :}
+                        ;
+
+    term                ::= term:t STAR factor:f
+                        {: RESULT = new Integer(t.intValue() * f.intValue()); :}
+                        |   term:t SLASH factor:f
+                        {: RESULT = new Integer(t.intValue() / f.intValue()); :}
+                        |   factor:f
+                        {: RESULT = new Integer(f.intValue()); :}
+                        ;
+
+    factor              ::= NUMBER:n
+                        {: RESULT = new Integer(n.intValue()); :}
+                        |   LPAREN expr:e RPAREN
+                        {: RESULT = new Integer(e.intValue()); :}
+                        |   MINUS factor:f
+                        {: RESULT = new Integer(f.intValue()); :}
+                        ;

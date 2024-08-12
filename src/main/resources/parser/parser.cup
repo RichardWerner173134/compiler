@@ -1,7 +1,20 @@
 /* ----------------------Preliminary Declarations Section--------------------*/
 
 /* Import the class java_cup.runtime.*  */
-import java_cup.runtime.*;
+import java_cup.runtime.ComplexSymbolFactory;
+
+import com.werner.compiler.ast.Program;
+import com.werner.compiler.ast.statements.AssignStatement;
+import com.werner.compiler.ast.statements.EmptyStatement;
+import com.werner.compiler.ast.statements.Statement;
+import com.werner.compiler.ast.expressions.Expression;
+import com.werner.compiler.ast.expressions.BinaryExpression;
+import com.werner.compiler.ast.Identifier;
+import com.werner.compiler.ast.expressions.IntLiteral;
+import com.werner.compiler.ast.Type;
+
+import java.util.List;
+import java.util.ArrayList;
 
 /* Parser code to change the way the parser reports errors (include
    line and column number of the error). */
@@ -57,60 +70,68 @@ parser code {:
         report_error(message, info);
         System.exit(1);
     }
-
-    public void sayHi(){
-        System.out.println("hi there");
-    }
 :};
 
 /* ------------Declaration of Terminals and Non Terminals Section----------- */
 
-terminal                        SEMICOLON, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN;
-terminal            Integer     NUMBER;
-terminal            String      IDENT;
+terminal                                        SEMICOLON, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN;
+terminal            Integer                     NUMBER;
+terminal            String                      IDENT;
 
-nonterminal         Integer     expr, term, factor;
-nonterminal         Object      program, statement_list, statement, assign_statement;
-nonterminal                     empty_statement;
+nonterminal         Expression                  expr, term, factor;
+nonterminal         Object                      program;
+nonterminal         List<Statement>             statement_list;
+nonterminal         Statement                   statement;
+nonterminal         AssignStatement             assign_statement;
+nonterminal         EmptyStatement              empty_statement;
 
 /* ----------------------------Grammar Section-------------------- */
 
-    program             ::= statement_list
+    program             ::= statement_list:stmnts
+                        {: RESULT = new Program(new ComplexSymbolFactory.Location(stmntsleft, stmntsright), stmnts); :}
                         ;
 
     statement_list      ::= /* epsilon */
-                        |   statement_list statement;
+                        {: RESULT = new ArrayList(); :}
 
-    statement           ::= assign_statement
-                        |   empty_statement
+                        |   statement_list:statement_list statement:statement
+                        {: statement_list.add(0, statement); RESULT = statement_list; :}
                         ;
 
-    empty_statement     ::= SEMICOLON
+    statement           ::= assign_statement:assign_statement
+                        {: RESULT = assign_statement; :}
+                        |   empty_statement:empty_statement
+                        {: RESULT = empty_statement; :}
                         ;
 
-    assign_statement    ::= IDENT:i ASGN expr:e SEMICOLON
+    empty_statement     ::= SEMICOLON:semicolon
+                        {: RESULT = new EmptyStatement(new ComplexSymbolFactory.Location(semicolonleft, semicolonright)); :}
                         ;
 
-    expr                ::= expr:e PLUS term:t
-                        {: RESULT = new Integer(e.intValue() + t.intValue()); :}
-                        |   expr:e MINUS term:t
-                        {: RESULT = new Integer(e.intValue() - t.intValue()); :}
-                        |   term:t
-                        {: RESULT = new Integer(t.intValue()); :}
+    assign_statement    ::= IDENT:identifier ASGN:asgn expr:expression SEMICOLON
+                        {: RESULT = new AssignStatement(new ComplexSymbolFactory.Location(asgnleft, asgnright), new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier), expression); :}
                         ;
 
-    term                ::= term:t STAR factor:f
-                        {: RESULT = new Integer(t.intValue() * f.intValue()); :}
-                        |   term:t SLASH factor:f
-                        {: RESULT = new Integer(t.intValue() / f.intValue()); :}
-                        |   factor:f
-                        {: RESULT = new Integer(f.intValue()); :}
+    expr                ::= expr:expression PLUS:operator term:term
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.ADD, expression, term); :}
+                        |   expr:expression MINUS:operator term:term
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.SUB, expression, term); :}
+                        |   term:term
+                        {: RESULT = term; :}
                         ;
 
-    factor              ::= NUMBER:n
-                        {: RESULT = new Integer(n.intValue()); :}
-                        |   LPAREN expr:e RPAREN
-                        {: RESULT = new Integer(e.intValue()); :}
-                        |   MINUS factor:f
-                        {: RESULT = new Integer(f.intValue()); :}
+    term                ::= term:term STAR:operator factor:factor
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.MUL, term, factor); :}
+                        |   term:term SLASH:operator factor:factor
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.DIV, term, factor); :}
+                        |   factor:factor
+                        {: RESULT = factor; :}
+                        ;
+
+    factor              ::= NUMBER:number
+                        {: RESULT = new IntLiteral(new ComplexSymbolFactory.Location(numberleft, numberright), Type.INTEGER, number); :}
+                        |   LPAREN:lparen expr:expression RPAREN:rparen
+                        {: RESULT = expression; :}
+                        |   MINUS:operator factor:factor
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.SUB, new IntLiteral(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, 0), factor); :}
                         ;

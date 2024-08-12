@@ -20,8 +20,7 @@ public class App
 
         try {
             Symbol parse = parser.parse();
-            Object value = parse.value;
-            int x = 0;
+            System.out.println(parse.value.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

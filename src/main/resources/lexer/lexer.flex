@@ -100,6 +100,14 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
     "("                { return symbol(sym.LPAREN); }
     ")"                { return symbol(sym.RPAREN); }
     "="                { return symbol(sym.ASGN); }
+    "{"                { return symbol(sym.LCURLYBRACE);}
+    "}"                { return symbol(sym.RCURLYBRACE);}
+
+    "true"             { return symbol(sym.TRUE);}
+    "false"            { return symbol(sym.FALSE);}
+    "if"               { return symbol(sym.IF);}
+    "else"             { return symbol(sym.ELSE);}
+
     /* If an integer is found print it out, return the token NUMBER
        that represents an integer and the value of the integer that is
        held in the string yytext which will get turned into an integer
@@ -113,6 +121,8 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
 
     /* Don't do anything if whitespace is found */
     {WhiteSpace}       { /* just skip what was found, do nothing */ }
+
+
 }
 
 

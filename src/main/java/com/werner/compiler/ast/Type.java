@@ -1,7 +1,7 @@
 package com.werner.compiler.ast;
 
 public enum Type {
-    STRING, INTEGER;
+    STRING, INTEGER, BOOLEAN;
 
     @Override
     public String toString() {

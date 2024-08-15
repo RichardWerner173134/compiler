@@ -4,21 +4,7 @@ import com.werner.compiler.ast.Type;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
-import java.util.List;
-
 public class BinaryExpression extends Expression {
-    public enum Operator {
-        ADD, SUB, MUL, DIV, EQU, NEQ;
-
-        public boolean isArithmetic() {
-            return List.of(ADD, SUB, MUL, DIV).contains(this);
-        }
-
-        public boolean isComparison(){
-            return !this.isArithmetic();
-        }
-    }
-
     public final Operator operator;
     public final Expression leftOperand;
     public final Expression rightOperand;

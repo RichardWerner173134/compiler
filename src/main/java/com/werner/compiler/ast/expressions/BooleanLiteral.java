@@ -4,14 +4,15 @@ import com.werner.compiler.ast.Type;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
-public class IntLiteral extends Expression {
-    public final Integer value;
+public class BooleanLiteral extends Expression {
 
-    public IntLiteral(
+    public final Boolean value;
+
+    public BooleanLiteral(
             ComplexSymbolFactory.Location location,
-            Integer value
+            Boolean value
     ) {
-        super(location, Type.INTEGER);
+        super(location, Type.BOOLEAN);
 
         this.value = value;
     }
@@ -23,7 +24,7 @@ public class IntLiteral extends Expression {
 
     @Override
     public String toString() {
-        return "IntLiteral{" +
+        return "BooleanLiteral{" +
                 "value=" + value +
                 '}';
     }

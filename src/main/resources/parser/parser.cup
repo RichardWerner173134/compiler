@@ -12,9 +12,14 @@ import com.werner.compiler.ast.expressions.BinaryExpression;
 import com.werner.compiler.ast.Identifier;
 import com.werner.compiler.ast.expressions.IntLiteral;
 import com.werner.compiler.ast.Type;
+import com.werner.compiler.ast.statements.IfStatement;
+import com.werner.compiler.ast.expressions.BooleanLiteral;
+import com.werner.compiler.ast.expressions.Operator;
+import com.werner.compiler.ast.expressions.VariableExpression;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Optional;
 
 /* Parser code to change the way the parser reports errors (include
    line and column number of the error). */
@@ -74,9 +79,10 @@ parser code {:
 
 /* ------------Declaration of Terminals and Non Terminals Section----------- */
 
-terminal                                        SEMICOLON, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN;
+terminal                                        SEMICOLON, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN, LCURLYBRACE, RCURLYBRACE, IF, ELSE;
 terminal            Integer                     NUMBER;
 terminal            String                      IDENT;
+terminal                                        TRUE, FALSE;
 
 nonterminal         Expression                  expr, term, factor;
 nonterminal         Object                      program;
@@ -84,10 +90,11 @@ nonterminal         List<Statement>             statement_list;
 nonterminal         Statement                   statement;
 nonterminal         AssignStatement             assign_statement;
 nonterminal         EmptyStatement              empty_statement;
+nonterminal         IfStatement                 if_statement;
 
 /* ----------------------------Grammar Section-------------------- */
 
-    program             ::= statement_list:stmnts
+    program             ::= LCURLYBRACE statement_list:stmnts RCURLYBRACE
                         {: RESULT = new Program(new ComplexSymbolFactory.Location(stmntsleft, stmntsright), stmnts); :}
                         ;
 
@@ -102,6 +109,8 @@ nonterminal         EmptyStatement              empty_statement;
                         {: RESULT = assign_statement; :}
                         |   empty_statement:empty_statement
                         {: RESULT = empty_statement; :}
+                        |   if_statement:if_statement
+                        {: RESULT = if_statement; :}
                         ;
 
     empty_statement     ::= SEMICOLON:semicolon
@@ -112,26 +121,38 @@ nonterminal         EmptyStatement              empty_statement;
                         {: RESULT = new AssignStatement(new ComplexSymbolFactory.Location(asgnleft, asgnright), new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier), expression); :}
                         ;
 
+    if_statement        ::= IF:if_token LPAREN:lparen expr:expression RPAREN:rparen LCURLYBRACE:if_lcurlybrace statement_list:statement_list RCURLYBRACE:if_rcurlybrace
+                        {: RESULT = new IfStatement(new ComplexSymbolFactory.Location(if_tokenleft, if_rcurlybraceright), expression, statement_list, Optional.empty()); :}
+                        |   IF:if_token LPAREN:lparen expr:expression RPAREN:rparen LCURLYBRACE:if_lcurlybrace statement_list:if_statement_list RCURLYBRACE:if_rcurlybrace ELSE:else_token LCURLYBRACE:else_lcurlybrace statement_list:else_statement_list RCURLYBRACE:else_rcurlybrace
+                        {: RESULT = new IfStatement(new ComplexSymbolFactory.Location(if_tokenleft, if_rcurlybraceright), expression, if_statement_list, Optional.of(else_statement_list)); :}
+                        ;
+
     expr                ::= expr:expression PLUS:operator term:term
-                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.ADD, expression, term); :}
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, Operator.ADD, expression, term); :}
                         |   expr:expression MINUS:operator term:term
-                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.SUB, expression, term); :}
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, Operator.SUB, expression, term); :}
                         |   term:term
                         {: RESULT = term; :}
                         ;
 
     term                ::= term:term STAR:operator factor:factor
-                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.MUL, term, factor); :}
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, Operator.MUL, term, factor); :}
                         |   term:term SLASH:operator factor:factor
-                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.DIV, term, factor); :}
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, Operator.DIV, term, factor); :}
                         |   factor:factor
                         {: RESULT = factor; :}
                         ;
 
     factor              ::= NUMBER:number
-                        {: RESULT = new IntLiteral(new ComplexSymbolFactory.Location(numberleft, numberright), Type.INTEGER, number); :}
+                        {: RESULT = new IntLiteral(new ComplexSymbolFactory.Location(numberleft, numberright), number); :}
                         |   LPAREN:lparen expr:expression RPAREN:rparen
                         {: RESULT = expression; :}
                         |   MINUS:operator factor:factor
-                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, BinaryExpression.Operator.SUB, new IntLiteral(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, 0), factor); :}
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Type.INTEGER, Operator.SUB, new IntLiteral(new ComplexSymbolFactory.Location(operatorleft, operatorright), 0), factor); :}
+                        |   IDENT:identifier
+                        {: RESULT = new VariableExpression(new ComplexSymbolFactory.Location(identifierleft, identifierright), new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier), null); :}
+                        |   TRUE:true_token
+                        {: RESULT = new BooleanLiteral(new ComplexSymbolFactory.Location(true_tokenleft, true_tokenright), true); :}
+                        |   FALSE:false_token
+                        {: RESULT = new BooleanLiteral(new ComplexSymbolFactory.Location(false_tokenleft, false_tokenright), false); :}
                         ;

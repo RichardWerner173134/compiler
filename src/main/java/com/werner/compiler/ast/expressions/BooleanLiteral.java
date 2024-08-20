@@ -1,6 +1,5 @@
 package com.werner.compiler.ast.expressions;
 
-import com.werner.compiler.ast.Type;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
@@ -12,7 +11,7 @@ public class BooleanLiteral extends Expression {
             ComplexSymbolFactory.Location location,
             Boolean value
     ) {
-        super(location, Type.BOOLEAN);
+        super(location);
 
         this.value = value;
     }

@@ -1,6 +1,5 @@
 package com.werner.compiler.ast.expressions;
 
-import com.werner.compiler.ast.Type;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
@@ -11,7 +10,7 @@ public class IntLiteral extends Expression {
             ComplexSymbolFactory.Location location,
             Integer value
     ) {
-        super(location, Type.INTEGER);
+        super(location);
 
         this.value = value;
     }

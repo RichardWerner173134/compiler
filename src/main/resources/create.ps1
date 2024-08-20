@@ -1,7 +1,7 @@
 cd $PSScriptRoot
-Write-Host "Creating Parser"
-./parser/make-parser
+Write-Host "Creating Lexer"
+./lexer/make-lexer
 
 cd $PSScriptRoot
 Write-Host "Creating Parser"
-./lexer/make-lexer
+./parser/make-parser

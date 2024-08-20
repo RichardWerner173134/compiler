@@ -8,28 +8,38 @@ package com.werner.compiler.generated;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int ASGN = 9;
+  public static final int IDENT = 18;
+  public static final int ASGN = 10;
   public static final int SEMICOLON = 2;
-  public static final int ELSE = 13;
-  public static final int IDENT = 15;
-  public static final int PLUS = 3;
-  public static final int RPAREN = 8;
-  public static final int STAR = 5;
-  public static final int SLASH = 6;
-  public static final int TRUE = 16;
-  public static final int IF = 12;
-  public static final int LPAREN = 7;
-  public static final int RCURLYBRACE = 11;
+  public static final int ELSE = 16;
+  public static final int PLUS = 4;
+  public static final int RPAREN = 9;
+  public static final int STAR = 6;
+  public static final int SLASH = 7;
+  public static final int TRUE = 19;
+  public static final int DOUBLECOLON = 3;
+  public static final int IF = 15;
+  public static final int LPAREN = 8;
+  public static final int RCURLYBRACE = 12;
+  public static final int LSQUAREBRACKET = 13;
+  public static final int BOOLEAN = 24;
+  public static final int STRING = 22;
+  public static final int NUMBER = 17;
   public static final int EOF = 0;
-  public static final int NUMBER = 14;
-  public static final int FALSE = 17;
-  public static final int MINUS = 4;
+  public static final int RECORD = 26;
+  public static final int FALSE = 20;
+  public static final int MINUS = 5;
   public static final int error = 1;
-  public static final int LCURLYBRACE = 10;
+  public static final int LCURLYBRACE = 11;
+  public static final int INTEGER = 23;
+  public static final int RSQUAREBRACKET = 14;
+  public static final int ARRAY = 25;
+  public static final int VAR = 21;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "SEMICOLON",
+  "DOUBLECOLON",
   "PLUS",
   "MINUS",
   "STAR",
@@ -39,12 +49,20 @@ public class sym {
   "ASGN",
   "LCURLYBRACE",
   "RCURLYBRACE",
+  "LSQUAREBRACKET",
+  "RSQUAREBRACKET",
   "IF",
   "ELSE",
   "NUMBER",
   "IDENT",
   "TRUE",
-  "FALSE"
+  "FALSE",
+  "VAR",
+  "STRING",
+  "INTEGER",
+  "BOOLEAN",
+  "ARRAY",
+  "RECORD"
   };
 }
 

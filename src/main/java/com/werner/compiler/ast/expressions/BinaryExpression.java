@@ -1,6 +1,5 @@
 package com.werner.compiler.ast.expressions;
 
-import com.werner.compiler.ast.Type;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
@@ -11,12 +10,11 @@ public class BinaryExpression extends Expression {
 
     public BinaryExpression(
             ComplexSymbolFactory.Location location,
-            Type dataType,
             Operator operator,
             Expression leftOperand,
             Expression rightOperand
     ) {
-        super(location, dataType);
+        super(location);
 
         this.operator = operator;
         this.leftOperand = leftOperand;
@@ -34,7 +32,6 @@ public class BinaryExpression extends Expression {
                 "operator=" + operator +
                 ", leftOperand=" + leftOperand +
                 ", rightOperand=" + rightOperand +
-                ", dataType=" + dataType +
                 '}';
     }
 }

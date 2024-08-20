@@ -90,6 +90,7 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
 
     /* Return the token SEMI declared in the class sym that was found. */
     ";"                { return symbol(sym.SEMICOLON); }
+    ":"                { return symbol(sym.DOUBLECOLON); }
 
     /* Print the token found that was declared in the class sym and then
        return it. */
@@ -102,26 +103,35 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
     "="                { return symbol(sym.ASGN); }
     "{"                { return symbol(sym.LCURLYBRACE);}
     "}"                { return symbol(sym.RCURLYBRACE);}
+    "["                { return symbol(sym.LSQUAREBRACKET);}
+    "]"                { return symbol(sym.RSQUAREBRACKET);}
 
     "true"             { return symbol(sym.TRUE);}
     "false"            { return symbol(sym.FALSE);}
     "if"               { return symbol(sym.IF);}
     "else"             { return symbol(sym.ELSE);}
 
-    /* If an integer is found print it out, return the token NUMBER
-       that represents an integer and the value of the integer that is
-       held in the string yytext which will get turned into an integer
-       before returning */
-    {INT_LIT}      { return symbol(sym.NUMBER, new Integer(yytext())); }
+    "string"           {return symbol(sym.STRING);}
+    "int"              {return symbol(sym.INTEGER);}
+    "bool"             {return symbol(sym.BOOLEAN);}
+
+    "var"              {return symbol(sym.VAR);}
+
+    "array"            {return symbol(sym.ARRAY);}
+
+    "record"           {return symbol(sym.RECORD);}
+
+    "type"             {return symbol(sym.TYPE);}
+
+    {INT_LIT}          { return symbol(sym.NUMBER, new Integer(yytext())); }
 
     /* If an identifier is found print it out, return the token ID
        that represents an identifier and the default value one that is
        given to all identifiers. */
-    {IDENT}       { return symbol(sym.IDENT, yytext());}
+    {IDENT}            { return symbol(sym.IDENT, yytext());}
 
     /* Don't do anything if whitespace is found */
     {WhiteSpace}       { /* just skip what was found, do nothing */ }
-
 
 }
 

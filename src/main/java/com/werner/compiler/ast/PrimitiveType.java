@@ -1,6 +1,6 @@
 package com.werner.compiler.ast;
 
-public enum Type {
+public enum PrimitiveType {
     STRING, INTEGER, BOOLEAN;
 
     @Override

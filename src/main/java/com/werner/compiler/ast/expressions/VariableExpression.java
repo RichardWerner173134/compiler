@@ -1,7 +1,7 @@
 package com.werner.compiler.ast.expressions;
 
 import com.werner.compiler.ast.Identifier;
-import com.werner.compiler.ast.Type;
+import com.werner.compiler.ast.PrimitiveType;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
@@ -11,7 +11,7 @@ public class VariableExpression extends Expression {
     public VariableExpression(
             ComplexSymbolFactory.Location location,
             Identifier identifier,
-            Type dataType
+            PrimitiveType dataType
     ) {
         super(location, dataType);
 

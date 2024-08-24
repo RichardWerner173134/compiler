@@ -12,6 +12,7 @@ public class Identifier extends Node {
             String name
     ) {
         super(location);
+
         this.name = name;
     }
 

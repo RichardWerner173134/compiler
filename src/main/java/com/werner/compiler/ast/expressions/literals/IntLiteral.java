@@ -1,5 +1,6 @@
-package com.werner.compiler.ast.expressions;
+package com.werner.compiler.ast.expressions.literals;
 
+import com.werner.compiler.ast.expressions.Expression;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 

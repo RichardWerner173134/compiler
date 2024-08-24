@@ -10,13 +10,21 @@ import com.werner.compiler.ast.statements.Statement;
 import com.werner.compiler.ast.expressions.Expression;
 import com.werner.compiler.ast.expressions.BinaryExpression;
 import com.werner.compiler.ast.Identifier;
-import com.werner.compiler.ast.expressions.IntLiteral;
+import com.werner.compiler.ast.expressions.literals.IntLiteral;
 import com.werner.compiler.ast.PrimitiveType;
 import com.werner.compiler.ast.statements.IfStatement;
-import com.werner.compiler.ast.expressions.BooleanLiteral;
+import com.werner.compiler.ast.expressions.literals.BooleanLiteral;
 import com.werner.compiler.ast.expressions.Operator;
 import com.werner.compiler.ast.expressions.VariableExpression;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
+import com.werner.compiler.ast.expressions.type.AbstractTypeExpression;
+import com.werner.compiler.ast.expressions.type.ArrayTypeExpression;
+import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
+import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
+import com.werner.compiler.ast.expressions.type.RecordTypeExpression;
+import com.werner.compiler.ast.declaration.TypeDeclaration;
+
+import com.werner.compiler.ast.statements.VariableDeclarationStatement;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -80,26 +88,35 @@ parser code {:
 
 /* ------------Declaration of Terminals and Non Terminals Section----------- */
 
-terminal                                        SEMICOLON, DOUBLECOLON, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN, LCURLYBRACE, RCURLYBRACE, LSQUAREBRACKET, RSQUAREBRACKET, IF, ELSE;
-terminal            Integer                     NUMBER;
-terminal            String                      IDENT;
-terminal                                        TRUE, FALSE;
-terminal                                        VAR;
-terminal                                        STRING, INTEGER, BOOLEAN;
-terminal                                        ARRAY;
-terminal                                        RECORD;
+terminal                                            SEMICOLON, DOUBLECOLON, COMMA, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN, LCURLYBRACE, RCURLYBRACE, LSQUAREBRACKET, RSQUAREBRACKET, IF, ELSE;
+terminal            Integer                         NUMBER;
+terminal            String                          IDENT;
+terminal                                            TRUE, FALSE;
+terminal                                            VAR;
+terminal                                            STRING, INTEGER, BOOLEAN;
+terminal                                            ARRAY, OF;
+terminal                                            RECORD;
+terminal                                            TYPE;
 
-nonterminal         Expression                  expr, term, factor;
-nonterminal         Object                      program;
-nonterminal         List<Statement>             statement_list;
-nonterminal         Statement                   statement;
-nonterminal         AssignStatement             assign_statement;
-nonterminal         EmptyStatement              empty_statement;
-nonterminal         IfStatement                 if_statement;
-nonterminal         VariableDeclaration         variable_declaration;
-nonterminal         PrimitiveType               primitive_type;
-nonterminal         TypeExpression              type_expression;
-nonterminal         TypeDeclaration             type_declaration;
+nonterminal         Expression                      expr, term, factor;
+nonterminal         Object                          program;
+nonterminal         List<Statement>                 statement_list;
+nonterminal         Statement                       statement;
+nonterminal         AssignStatement                 assign_statement;
+nonterminal         EmptyStatement                  empty_statement;
+nonterminal         IfStatement                     if_statement;
+nonterminal         VariableDeclarationStatement    variable_declaration_statement;
+
+nonterminal         VariableDeclaration             variable_declaration;
+nonterminal         List<VariableDeclaration>       variable_declaration_list;
+nonterminal         PrimitiveType                   primitive_type;
+
+nonterminal         AbstractTypeExpression          type_expression;
+nonterminal         PrimitiveTypeExpression         primitive_type_expression;
+nonterminal         ArrayTypeExpression             array_type_expression;
+nonterminal         RecordTypeExpression            record_type_expression;
+
+nonterminal         TypeDeclaration                 type_declaration;
 
 /* ----------------------------Grammar Section-------------------- */
 
@@ -120,9 +137,13 @@ nonterminal         TypeDeclaration             type_declaration;
                         {: RESULT = empty_statement; :}
                         |   if_statement:if_statement
                         {: RESULT = if_statement; :}
-                        |   variable_declaration:variable_declaration
-                        {: RESULT = variable_declaration; :}
+                        |   variable_declaration_statement:variable_declaration_statement
+                        {: RESULT = variable_declaration_statement; :}
+                        |   type_declaration:type_declaration
+                        {: RESULT = type_declaration; :}
                         ;
+
+ /* ----------------------------Statements Section-------------------- */
 
     empty_statement     ::= SEMICOLON:semicolon
                         {: RESULT = new EmptyStatement(new ComplexSymbolFactory.Location(semicolonleft, semicolonright)); :}
@@ -138,20 +159,78 @@ nonterminal         TypeDeclaration             type_declaration;
                         {: RESULT = new IfStatement(new ComplexSymbolFactory.Location(if_tokenleft, if_rcurlybraceright), expression, if_statement_list, Optional.of(else_statement_list)); :}
                         ;
 
-    variable_declaration::= VAR:var IDENT:identifier DOUBLECOLON:doublecolon type:type SEMICOLON
-                        {: RESULT = new VariableDeclaration(new ComplexSymbolFactory.Location(varleft, varright), new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier), type); :}
-                        |   VAR:var IDENT:identifier DOUBLECOLON:doublecolon IDENT:type SEMICOLON
-                        {: RESULT = new VariableDeclaration(new ComplexSymbolFactory.Location(varleft, varright), new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier), type); :}
+    variable_declaration_statement::= VAR:varname variable_declaration:variable_declaration SEMICOLON
+                        {: RESULT = new VariableDeclarationStatement(new ComplexSymbolFactory.Location(varnameleft, varnameright), variable_declaration); :}
                         ;
 
-    type_declaration    ::= TYPE:type IDENT:identifier DOUBLECOLON:doublecolon ASGN:asgn type_expression
+    type_declaration    ::= TYPE:type IDENT:identifier ASGN:asgn type_expression:type_expression SEMICOLON
+                        {: RESULT = new TypeDeclaration(
+                                    new ComplexSymbolFactory.Location(typeleft, typeright),
+                                    new Identifier(
+                                        new ComplexSymbolFactory.Location(identifierleft, identifierright),
+                                        identifier
+                                    ),
+                                    type_expression
+                                ); :}
                         ;
 
-    type_expression     ::= ARRAY:array LSQUAREBRACKET:lsb NUMBER:number RSQUAREBRACKET:rsb type_expression:type_expression
-                        |   LPAREN:lp IDENT:identifier type_expression:type_expression RPAREN:rp
-                        | primitive_type
+/* ----------------------------Declaration Section-------------------- */
+    variable_declaration::= IDENT:identifier DOUBLECOLON:doublecolon primitive_type_expression:primitive_type_expression
+                        {: RESULT = new VariableDeclaration(
+                                new ComplexSymbolFactory.Location(identifierleft, identifierright),
+                                new Identifier(
+                                    new ComplexSymbolFactory.Location(identifierleft, identifierright),
+                                    identifier
+                                ),
+                                primitive_type_expression
+                            );
+                        :}
+                        |   IDENT:identifier1 DOUBLECOLON:doublecolon IDENT:identifier2
+                        {: RESULT = new VariableDeclaration(
+                               new ComplexSymbolFactory.Location(identifier1left, identifier1right),
+                               new Identifier(
+                                   new ComplexSymbolFactory.Location(identifier1left, identifier1right),
+                                   identifier1
+                               ),
+                               new NamedTypeExpression(
+                                   new ComplexSymbolFactory.Location(identifier1left, identifier1right),
+                                   new Identifier(new ComplexSymbolFactory.Location(identifier2left, identifier2right), identifier2)
+                               )
+                            );
+                        :}
+                       ;
+
+/* ----------------------------Type Section-------------------- */
+
+    type_expression     ::= primitive_type_expression:primitive_type_expression
+                        {: RESULT = primitive_type_expression; :}
+                        |   array_type_expression:array_type_expression
+                        {: RESULT = array_type_expression; :}
+                        |   record_type_expression:record_type_expression
+                        {: RESULT = record_type_expression; :}
                         ;
 
+    primitive_type_expression ::= primitive_type:primitive_type
+                        {: RESULT = new PrimitiveTypeExpression(
+                                new ComplexSymbolFactory.Location(primitive_typeleft, primitive_typeright),
+                                primitive_type
+                            ); :}
+                        ;
+
+    array_type_expression ::= ARRAY:array LSQUAREBRACKET:lsb NUMBER:number RSQUAREBRACKET:rsb OF:of type_expression:type_expression
+                        {: RESULT = new ArrayTypeExpression(
+                                new ComplexSymbolFactory.Location(arrayleft, arrayright),
+                                number,
+                                type_expression
+                            ); :}
+                        ;
+
+    record_type_expression::=   RECORD:record LCURLYBRACE:lcb variable_declaration_list:variable_declaration_list RCURLYBRACE:rcb
+                        {: RESULT = new RecordTypeExpression(
+                                new ComplexSymbolFactory.Location(recordleft, recordright),
+                                variable_declaration_list
+                            ); :}
+                        ;
     primitive_type      ::= STRING
                         {: RESULT = PrimitiveType.STRING; :}
                         |   INTEGER
@@ -160,6 +239,15 @@ nonterminal         TypeDeclaration             type_declaration;
                         {: RESULT = PrimitiveType.BOOLEAN; :}
                         ;
 
+    variable_declaration_list ::= /* epsilon */
+                        {: RESULT = new ArrayList(); :}
+                        |   variable_declaration:declaration
+                        {: List<VariableDeclaration> list = new ArrayList(); list.add(declaration); RESULT = list; :}
+                        |   variable_declaration:variable_declaration COMMA:comma variable_declaration_list:list
+                        {: list.add(variable_declaration); RESULT = list; :}
+                        ;
+
+/* ----------------------------Expression Section-------------------- */
     expr                ::= expr:expression PLUS:operator term:term
                         {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.ADD, expression, term); :}
                         |   expr:expression MINUS:operator term:term

@@ -1,3 +1,8 @@
 {
-    var f : int;
+    type myFirstRecordType = record {
+        x : int,
+        y : int
+    };
+
+    var v : myRecordType;
 }

@@ -91,6 +91,7 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
     /* Return the token SEMI declared in the class sym that was found. */
     ";"                { return symbol(sym.SEMICOLON); }
     ":"                { return symbol(sym.DOUBLECOLON); }
+    ","                { return symbol(sym.COMMA); }
 
     /* Print the token found that was declared in the class sym and then
        return it. */
@@ -117,6 +118,7 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
 
     "var"              {return symbol(sym.VAR);}
 
+    "of"               {return symbol(sym.OF);}
     "array"            {return symbol(sym.ARRAY);}
 
     "record"           {return symbol(sym.RECORD);}

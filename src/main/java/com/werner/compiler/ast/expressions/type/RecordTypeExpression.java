@@ -38,7 +38,7 @@ public class RecordTypeExpression extends AbstractTypeExpression {
                 + variableDeclarations
                     .stream()
                     .map(d -> d.print(depth + 1))
-                    .collect(Collectors.joining("\n" + result + "\t"))
-                + "\n" + result + ")";
+                    .collect(Collectors.joining("\n")) + "\n"
+                + result + ")";
     }
 }

@@ -7,6 +7,10 @@
     }
 
     if(true) {
+        type a = record {
+            name: string,
+            age: int
+        };
     } else {
 
     }

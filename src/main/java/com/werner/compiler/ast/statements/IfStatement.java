@@ -1,6 +1,7 @@
 package com.werner.compiler.ast.statements;
 
 import com.werner.compiler.ast.expressions.Expression;
+import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 import java.util.List;
@@ -33,14 +34,12 @@ public class IfStatement extends Statement {
     @Override
     public String print(int depth) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            result.append("\t");
-        }
+        result.append("\t".repeat(Math.max(0, depth)));
 
         return result + "IfStatement(\n"
                 + condition.print(depth + 1) + "\n"
 
-                + result + "\t" + "[" + "\n"
+                + result + "\t" + "StatementsIf[" + "\n"
                 + ifStatements
                     .stream()
                     .map(s -> s.print(depth + 2))
@@ -49,15 +48,19 @@ public class IfStatement extends Statement {
                 + result + "\t" + "]" + "\n"
 
                 + elseStatements.map(statements ->
-                        result + "\t" + "[" + "\n" +
+                        result + "\t" + "StatementsElse[" + "\n" +
                             statements
                                 .stream()
                                 .map(s -> s.print(depth + 2))
                                 .collect(Collectors.joining("\n"))
                         + "\n" + result + "\t" + "]"
                     )
-                    .orElse(result + "\t" + "[]")
+                    .orElse(result + "\t" + "StatementsElse[]")
                 + "\n" + result + ")";
     }
 
+    @Override
+    public void accept(Visitor visitor) {
+
+    }
 }

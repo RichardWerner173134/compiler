@@ -34,10 +34,12 @@ public class BinaryExpression extends Expression {
     @Override
     public String print(int depth) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            result.append("\t");
-        }
+        result.append("\t".repeat(Math.max(0, depth)));
 
-        return result + "BinaryExp(\n" + result + "\t" + operator + "\n" + result + "\t" + leftOperand.print(depth + 1) + "\n" + result + "\t" + rightOperand.print(depth + 1) + "\n" + result + ")";
+        return result + "BinaryExp(\n"
+                + result + "\t" + operator + "\n"
+                + leftOperand.print(depth + 1) + "\n"
+                + rightOperand.print(depth + 1) + "\n"
+                + result + ")";
     }
 }

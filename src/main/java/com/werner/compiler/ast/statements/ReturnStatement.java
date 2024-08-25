@@ -1,28 +1,25 @@
 package com.werner.compiler.ast.statements;
 
-import com.werner.compiler.ast.Identifier;
 import com.werner.compiler.ast.expressions.Expression;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
-public class AssignStatement extends Statement {
-    public final Identifier target;
+public class ReturnStatement extends Statement {
 
-    public final Expression value;
+    public final Expression expression;
 
-    public AssignStatement(
+    public ReturnStatement(
             ComplexSymbolFactory.Location location,
-            Identifier target,
-            Expression value
+            Expression expression
     ) {
         super(location);
-        this.target = target;
-        this.value = value;
+
+        this.expression = expression;
     }
 
     @Override
     public String toString() {
-        return "ASGN(" + target + ", " + value + ")";
+        return "ReturnStatement(" + expression + ")";
     }
 
     @Override
@@ -30,10 +27,10 @@ public class AssignStatement extends Statement {
         StringBuilder result = new StringBuilder();
         result.append("\t".repeat(Math.max(0, depth)));
 
-        return result + "ASGN(\n"
-                + target.print(depth + 1) + "\n"
-                + value.print(depth + 1) + "\n"
+        return result + "Return(\n"
+                + expression.print(depth + 1) + "\n"
                 + result + ")";
+
     }
 
     @Override

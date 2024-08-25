@@ -7,6 +7,7 @@ import com.werner.compiler.ast.Program;
 import com.werner.compiler.ast.statements.AssignStatement;
 import com.werner.compiler.ast.statements.EmptyStatement;
 import com.werner.compiler.ast.statements.Statement;
+import com.werner.compiler.ast.statements.WhileStatement;
 import com.werner.compiler.ast.expressions.Expression;
 import com.werner.compiler.ast.expressions.BinaryExpression;
 import com.werner.compiler.ast.Identifier;
@@ -23,8 +24,10 @@ import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
 import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
 import com.werner.compiler.ast.expressions.type.RecordTypeExpression;
 import com.werner.compiler.ast.declaration.TypeDeclaration;
-
+import com.werner.compiler.ast.declaration.FunctionDeclaration;
 import com.werner.compiler.ast.statements.VariableDeclarationStatement;
+import com.werner.compiler.ast.statements.ReturnStatement;
+import com.werner.compiler.ast.expressions.FunctionCall;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -88,7 +91,7 @@ parser code {:
 
 /* ------------Declaration of Terminals and Non Terminals Section----------- */
 
-terminal                                            SEMICOLON, DOUBLECOLON, COMMA, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN, LCURLYBRACE, RCURLYBRACE, LSQUAREBRACKET, RSQUAREBRACKET, IF, ELSE;
+terminal                                            SEMICOLON, DOUBLECOLON, COMMA, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN, LCURLYBRACE, RCURLYBRACE, LSQUAREBRACKET, RSQUAREBRACKET, IF, ELSE, WHILE;
 terminal            Integer                         NUMBER;
 terminal            String                          IDENT;
 terminal                                            TRUE, FALSE;
@@ -97,15 +100,22 @@ terminal                                            STRING, INTEGER, BOOLEAN;
 terminal                                            ARRAY, OF;
 terminal                                            RECORD;
 terminal                                            TYPE;
+terminal                                            FUNCTION;
+terminal                                            RETURN;
 
 nonterminal         Expression                      expr, term, factor;
+nonterminal         List<Expression>                expression_list;
 nonterminal         Object                          program;
 nonterminal         List<Statement>                 statement_list;
 nonterminal         Statement                       statement;
 nonterminal         AssignStatement                 assign_statement;
 nonterminal         EmptyStatement                  empty_statement;
-nonterminal         IfStatement                     if_statement;
 nonterminal         VariableDeclarationStatement    variable_declaration_statement;
+nonterminal         ReturnStatement                 return_statement;
+nonterminal         FunctionCall                    function_call;
+
+nonterminal         IfStatement                     if_statement;
+nonterminal         WhileStatement                  while_statement;
 
 nonterminal         VariableDeclaration             variable_declaration;
 nonterminal         List<VariableDeclaration>       variable_declaration_list;
@@ -117,6 +127,7 @@ nonterminal         ArrayTypeExpression             array_type_expression;
 nonterminal         RecordTypeExpression            record_type_expression;
 
 nonterminal         TypeDeclaration                 type_declaration;
+nonterminal         FunctionDeclaration             function_declaration;
 
 /* ----------------------------Grammar Section-------------------- */
 
@@ -137,10 +148,16 @@ nonterminal         TypeDeclaration                 type_declaration;
                         {: RESULT = empty_statement; :}
                         |   if_statement:if_statement
                         {: RESULT = if_statement; :}
+                        |   while_statement:while_statement
+                        {: RESULT = while_statement; :}
                         |   variable_declaration_statement:variable_declaration_statement
                         {: RESULT = variable_declaration_statement; :}
                         |   type_declaration:type_declaration
                         {: RESULT = type_declaration; :}
+                        |   function_declaration:function_declaration
+                        {: RESULT = function_declaration; :}
+                        |   return_statement:return_statement
+                        {: RESULT = return_statement; :}
                         ;
 
  /* ----------------------------Statements Section-------------------- */
@@ -159,6 +176,15 @@ nonterminal         TypeDeclaration                 type_declaration;
                         {: RESULT = new IfStatement(new ComplexSymbolFactory.Location(if_tokenleft, if_rcurlybraceright), expression, if_statement_list, Optional.of(else_statement_list)); :}
                         ;
 
+    while_statement     ::= WHILE:whiletoken LPAREN:lparen expr:expression RPAREN:rparen LCURLYBRACE:lcb statement_list:statement_list RCURLYBRACE:rcb
+                        {: RESULT = new WhileStatement(
+                                new ComplexSymbolFactory.Location(whiletokenleft, whiletokenright),
+                                expression,
+                                statement_list
+                            );
+                        :}
+                        ;
+
     variable_declaration_statement::= VAR:varname variable_declaration:variable_declaration SEMICOLON
                         {: RESULT = new VariableDeclarationStatement(new ComplexSymbolFactory.Location(varnameleft, varnameright), variable_declaration); :}
                         ;
@@ -174,7 +200,33 @@ nonterminal         TypeDeclaration                 type_declaration;
                                 ); :}
                         ;
 
+    function_declaration::= FUNCTION:function IDENT:identifier LPAREN:lparen variable_declaration_list:variable_declaration_list RPAREN DOUBLECOLON type_expression:type_expression LCURLYBRACE statement_list:statement_list RCURLYBRACE
+                        {: RESULT = new FunctionDeclaration(
+                                new ComplexSymbolFactory.Location(functionleft, functionright),
+                                new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier),
+                                variable_declaration_list,
+                                type_expression,
+                                statement_list
+                            ); :}
+                            ;
+
+    return_statement    ::= RETURN:return_keyword expr:expression
+                        {: RESULT = new ReturnStatement(
+                                new ComplexSymbolFactory.Location(return_keywordleft, return_keywordright),
+                                expression
+                            );
+                        :}
+                        ;
+
+    function_call       ::= IDENT:identifier LPAREN:lparen expression_list:expression_list RPAREN
+                        {: RESULT = new FunctionCall(
+                                new ComplexSymbolFactory.Location(identifierleft, identifierright),
+                                new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier),
+                                expression_list
+                            ); :}
+                        ;
 /* ----------------------------Declaration Section-------------------- */
+
     variable_declaration::= IDENT:identifier DOUBLECOLON:doublecolon type_expression:type_expression
                         {: RESULT = new VariableDeclaration(
                                 new ComplexSymbolFactory.Location(identifierleft, identifierright),
@@ -258,12 +310,23 @@ nonterminal         TypeDeclaration                 type_declaration;
                         ;
 
 /* ----------------------------Expression Section-------------------- */
+
+    expression_list     ::= /* epsilon */
+                        {: RESULT = new ArrayList(); :}
+                        | expr:expression
+                        {: List<Expression> list = new ArrayList(); list.add(expression); RESULT = list; :}
+                        | expression_list:expression_list COMMA expr:expression
+                        {: expression_list.add(expression); RESULT = expression_list; :}
+                        ;
+
     expr                ::= expr:expression PLUS:operator term:term
                         {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.ADD, expression, term); :}
                         |   expr:expression MINUS:operator term:term
                         {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.SUB, expression, term); :}
                         |   term:term
                         {: RESULT = term; :}
+                        |   function_call:function_call
+                        {: RESULT = function_call; :}
                         ;
 
     term                ::= term:term STAR:operator factor:factor

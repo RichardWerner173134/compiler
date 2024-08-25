@@ -1,29 +1,31 @@
-package com.werner.compiler.ast.declaration;
+package com.werner.compiler.ast.expressions;
 
 import com.werner.compiler.ast.Identifier;
-import com.werner.compiler.ast.expressions.type.AbstractTypeExpression;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
-public class TypeDeclaration extends Declaration {
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class FunctionCall extends Expression {
 
     public final Identifier identifier;
-    public final AbstractTypeExpression typeExpression;
+    public final List<Expression> argumentList;
 
-    public TypeDeclaration(
+    public FunctionCall(
             ComplexSymbolFactory.Location location,
             Identifier identifier,
-            AbstractTypeExpression typeExpression
+            List<Expression> argumentList
     ) {
         super(location);
 
         this.identifier = identifier;
-        this.typeExpression = typeExpression;
+        this.argumentList = argumentList;
     }
 
     @Override
     public String toString() {
-        return "TypeDeclaration(" + identifier + ", " + typeExpression + ")";
+        return "FunctionCall(" + identifier + ", " + argumentList + ")";
     }
 
     @Override
@@ -31,9 +33,9 @@ public class TypeDeclaration extends Declaration {
         StringBuilder result = new StringBuilder();
         result.append("\t".repeat(Math.max(0, depth)));
 
-        return result + "TypeDeclaration(\n"
+        return result + "FunctionCall(\n"
                 + identifier.print(depth + 1) + "\n"
-                + typeExpression.print(depth + 1) + "\n"
+                + argumentList.stream().map(a -> a.print(depth + 2)).collect(Collectors.joining("\n")) + "\n"
                 + result + ")";
     }
 

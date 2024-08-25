@@ -111,6 +111,7 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
     "false"            { return symbol(sym.FALSE);}
     "if"               { return symbol(sym.IF);}
     "else"             { return symbol(sym.ELSE);}
+    "while"            { return symbol(sym.WHILE);}
 
     "string"           {return symbol(sym.STRING);}
     "int"              {return symbol(sym.INTEGER);}
@@ -124,6 +125,9 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
     "record"           {return symbol(sym.RECORD);}
 
     "type"             {return symbol(sym.TYPE);}
+
+    "function"         {return symbol(sym.FUNCTION);}
+    "return"           {return symbol(sym.RETURN);}
 
     {INT_LIT}          { return symbol(sym.NUMBER, new Integer(yytext())); }
 

@@ -30,9 +30,7 @@ public class BooleanLiteral extends Expression {
     @Override
     public String print(int depth) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            result.append("\t");
-        }
+        result.append("\t".repeat(Math.max(0, depth)));
 
         return result + "Bool(" + value + ")";
     }

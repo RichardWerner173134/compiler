@@ -1,11 +1,13 @@
 {
-    type v = array [12] of asd;
+    var isTrue : bool;
 
-    if(true){
-        var a : int;
-        x = 2+3;
+    while(true) {
+        var x : bool;
+        x = abc(12, true) + 42;
+    }
+
+    if(true) {
     } else {
-        x = 42;
-        type a = int;
+
     }
 }

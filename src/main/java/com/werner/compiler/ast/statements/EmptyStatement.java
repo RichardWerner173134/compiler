@@ -1,5 +1,6 @@
 package com.werner.compiler.ast.statements;
 
+import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public class EmptyStatement extends Statement {
@@ -16,11 +17,13 @@ public class EmptyStatement extends Statement {
     @Override
     public String print(int depth) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < depth; i++) {
-            result.append("\t");
-        }
+        result.append("\t".repeat(Math.max(0, depth)));
 
         return result + "EmptyStatement";
     }
 
+    @Override
+    public void accept(Visitor visitor) {
+
+    }
 }

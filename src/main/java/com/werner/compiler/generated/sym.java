@@ -8,36 +8,39 @@ package com.werner.compiler.generated;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int IDENT = 19;
+  public static final int IDENT = 20;
   public static final int ELSE = 17;
   public static final int ASGN = 11;
   public static final int SEMICOLON = 2;
   public static final int PLUS = 5;
   public static final int RPAREN = 10;
+  public static final int WHILE = 18;
   public static final int STAR = 7;
   public static final int SLASH = 8;
-  public static final int TRUE = 20;
+  public static final int RETURN = 32;
+  public static final int FUNCTION = 31;
+  public static final int TRUE = 21;
   public static final int DOUBLECOLON = 3;
   public static final int IF = 16;
   public static final int LPAREN = 9;
-  public static final int OF = 27;
+  public static final int OF = 28;
   public static final int RCURLYBRACE = 13;
   public static final int LSQUAREBRACKET = 14;
-  public static final int BOOLEAN = 25;
-  public static final int TYPE = 29;
-  public static final int STRING = 23;
+  public static final int BOOLEAN = 26;
+  public static final int TYPE = 30;
+  public static final int STRING = 24;
   public static final int COMMA = 4;
-  public static final int NUMBER = 18;
+  public static final int NUMBER = 19;
   public static final int EOF = 0;
-  public static final int RECORD = 28;
-  public static final int FALSE = 21;
+  public static final int RECORD = 29;
+  public static final int FALSE = 22;
   public static final int MINUS = 6;
   public static final int error = 1;
   public static final int LCURLYBRACE = 12;
-  public static final int INTEGER = 24;
+  public static final int INTEGER = 25;
   public static final int RSQUAREBRACKET = 15;
-  public static final int ARRAY = 26;
-  public static final int VAR = 22;
+  public static final int ARRAY = 27;
+  public static final int VAR = 23;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -57,6 +60,7 @@ public class sym {
   "RSQUAREBRACKET",
   "IF",
   "ELSE",
+  "WHILE",
   "NUMBER",
   "IDENT",
   "TRUE",
@@ -68,7 +72,9 @@ public class sym {
   "ARRAY",
   "OF",
   "RECORD",
-  "TYPE"
+  "TYPE",
+  "FUNCTION",
+  "RETURN"
   };
 }
 

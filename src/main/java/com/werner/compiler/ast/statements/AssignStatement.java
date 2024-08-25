@@ -21,9 +21,17 @@ public class AssignStatement extends Statement {
 
     @Override
     public String toString() {
-        return "AssignStatement{" +
-                "target=" + target +
-                ", value=" + value +
-                '}';
+        return "ASGN(" + target + ", " + value + ")";
     }
+
+    @Override
+    public String print(int depth) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            result.append("\t");
+        }
+
+        return result + "ASGN(\n" + target.print(depth + 1) + "\n" + result + "\t" + value + "\n" + result + ")";
+    }
+
 }

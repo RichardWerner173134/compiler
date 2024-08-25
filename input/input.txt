@@ -1,8 +1,11 @@
 {
-    type myFirstRecordType = record {
-        x : int,
-        y : int
-    };
+    type v = array [12] of asd;
 
-    var v : myRecordType;
+    if(true){
+        var a : int;
+        x = 2+3;
+    } else {
+        x = 42;
+        type a = int;
+    }
 }

@@ -24,8 +24,18 @@ public class NamedTypeExpression extends AbstractTypeExpression {
 
     @Override
     public String toString() {
-        return "NamedTypeExpression{" +
-                "identifier=" + identifier +
-                '}';
+        return "NamedType(" + identifier + ")";
+    }
+
+    @Override
+    public String print(int depth) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            result.append("\t");
+        }
+
+        return result + "NamedType(\n"
+                + identifier.print(depth + 1) + "\n"
+                + result + ")";
     }
 }

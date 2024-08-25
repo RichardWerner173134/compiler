@@ -5,6 +5,7 @@ import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Program extends Node {
 
@@ -27,8 +28,22 @@ public class Program extends Node {
 
     @Override
     public String toString() {
-        return "Program{" +
-                "statementList=" + statementList +
-                '}';
+        return "Program(" + statementList + ")";
     }
+
+    @Override
+    public String print(int depth) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            result.append("\t");
+        }
+
+        return result + "Program(\n"
+                + statementList
+                    .stream()
+                    .map(s -> s.print(depth + 1))
+                    .collect(Collectors.joining("\n"))
+                + "\n)";
+    }
+
 }

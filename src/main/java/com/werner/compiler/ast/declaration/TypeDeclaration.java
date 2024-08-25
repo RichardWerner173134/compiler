@@ -22,9 +22,19 @@ public class TypeDeclaration extends Declaration {
 
     @Override
     public String toString() {
-        return "TypeDeclaration{" +
-                "identifier=" + identifier +
-                ", typeExpression=" + typeExpression +
-                '}';
+        return "TypeDeclaration(" + identifier + ", " + typeExpression + ")";
+    }
+
+    @Override
+    public String print(int depth) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            result.append("\t");
+        }
+
+        return result + "TypeDeclaration(\n"
+                + identifier.print(depth + 1) + "\n"
+                + typeExpression.print(depth + 1) + "\n"
+                + result + ")";
     }
 }

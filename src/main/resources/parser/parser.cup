@@ -175,14 +175,14 @@ nonterminal         TypeDeclaration                 type_declaration;
                         ;
 
 /* ----------------------------Declaration Section-------------------- */
-    variable_declaration::= IDENT:identifier DOUBLECOLON:doublecolon primitive_type_expression:primitive_type_expression
+    variable_declaration::= IDENT:identifier DOUBLECOLON:doublecolon type_expression:type_expression
                         {: RESULT = new VariableDeclaration(
                                 new ComplexSymbolFactory.Location(identifierleft, identifierright),
                                 new Identifier(
                                     new ComplexSymbolFactory.Location(identifierleft, identifierright),
                                     identifier
                                 ),
-                                primitive_type_expression
+                                type_expression
                             );
                         :}
                         |   IDENT:identifier1 DOUBLECOLON:doublecolon IDENT:identifier2
@@ -223,6 +223,16 @@ nonterminal         TypeDeclaration                 type_declaration;
                                 number,
                                 type_expression
                             ); :}
+                        |   ARRAY:array LSQUAREBRACKET:lsb NUMBER:number RSQUAREBRACKET:rsb OF:of IDENT:identifier
+                        {: RESULT = new ArrayTypeExpression(
+                                new ComplexSymbolFactory.Location(arrayleft, arrayright),
+                                number,
+                                new NamedTypeExpression(
+                                    new ComplexSymbolFactory.Location(identifierleft, identifierright),
+                                    new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier)
+                                )
+                            );
+                        :}
                         ;
 
     record_type_expression::=   RECORD:record LCURLYBRACE:lcb variable_declaration_list:variable_declaration_list RCURLYBRACE:rcb

@@ -5,6 +5,7 @@ import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RecordTypeExpression extends AbstractTypeExpression {
     public final List<VariableDeclaration> variableDeclarations;
@@ -25,8 +26,21 @@ public class RecordTypeExpression extends AbstractTypeExpression {
 
     @Override
     public String toString() {
-        return "RecordTypeExpression{" +
-                "variableDeclarations=" + variableDeclarations +
-                '}';
+        return "Record(" + variableDeclarations + ")";
+    }
+
+    @Override
+    public String print(int depth) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            result.append("\t");
+        }
+
+        return result + "Record(\n"
+                + variableDeclarations
+                    .stream()
+                    .map(d -> d.print(depth + 1))
+                    .collect(Collectors.joining("\n" + result + "\t"))
+                + "\n" + result + ")";
     }
 }

@@ -1,5 +1,6 @@
 package com.werner.compiler;
 
+import com.werner.compiler.ast.Program;
 import com.werner.compiler.generated.Lexer;
 import com.werner.compiler.generated.Parser;
 import java_cup.runtime.Symbol;
@@ -21,6 +22,10 @@ public class App
         try {
             Symbol parse = parser.parse();
             System.out.println(parse.value.toString());
+
+            Program program = (Program) parse.value;
+            String treeVisualization = program.print(0);
+            System.out.println(treeVisualization);
         } catch (Exception e) {
             e.printStackTrace();
         }

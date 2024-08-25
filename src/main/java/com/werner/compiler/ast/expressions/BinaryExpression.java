@@ -28,10 +28,16 @@ public class BinaryExpression extends Expression {
 
     @Override
     public String toString() {
-        return "BinaryExpression{" +
-                "operator=" + operator +
-                ", leftOperand=" + leftOperand +
-                ", rightOperand=" + rightOperand +
-                '}';
+        return "BinaryExp(" + operator + ", " + leftOperand + ", " + rightOperand + ")";
+    }
+
+    @Override
+    public String print(int depth) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            result.append("\t");
+        }
+
+        return result + "BinaryExp(\n" + result + "\t" + operator + "\n" + result + "\t" + leftOperand.print(depth + 1) + "\n" + result + "\t" + rightOperand.print(depth + 1) + "\n" + result + ")";
     }
 }

@@ -1,7 +1,10 @@
 package com.werner.compiler.ast.expressions.type;
 
+import com.werner.compiler.ast.Node;
 import com.werner.compiler.ast.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
+
+import java.util.List;
 
 public class ArrayTypeExpression extends AbstractTypeExpression {
 
@@ -27,9 +30,18 @@ public class ArrayTypeExpression extends AbstractTypeExpression {
 
     @Override
     public String toString() {
-        return "ArrayTypeExpression{" +
-                "indexSize=" + indexSize +
-                ", typeExpression=" + typeExpression +
-                '}';
+        return "Arr(" + typeExpression + "[" + indexSize + "]" + ")";
+    }
+
+    @Override
+    public String print(int depth) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            result.append("\t");
+        }
+
+        return result + "Arr(\n"
+                + typeExpression.print(depth + 1) + "[" + indexSize + "]" + "\n"
+                + result + ")";
     }
 }

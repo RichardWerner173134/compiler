@@ -23,8 +23,17 @@ public class Identifier extends Node {
 
     @Override
     public String toString() {
-        return "Identifier{" +
-                "name='" + name + '\'' +
-                '}';
+        return "Ident(" + name + ")";
     }
+
+    @Override
+    public String print(int depth) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < depth; i++) {
+            result.append("\t");
+        }
+
+        return result + "Ident(" + name + ")";
+    }
+
 }

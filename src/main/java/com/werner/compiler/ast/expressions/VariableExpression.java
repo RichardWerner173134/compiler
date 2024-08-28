@@ -1,7 +1,7 @@
 package com.werner.compiler.ast.expressions;
 
 import com.werner.compiler.ast.Identifier;
-import com.werner.compiler.ast.visitor.Visitor;
+import com.werner.compiler.symboltable.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public class VariableExpression extends Expression {
@@ -31,7 +31,9 @@ public class VariableExpression extends Expression {
         StringBuilder result = new StringBuilder();
         result.append("\t".repeat(Math.max(0, depth)));
 
-        return result + "IDENT(" + identifier.print(depth + 1) + ")";
+        return result + "VariableExpression(\n"
+                + identifier.print(depth + 1) + "\n"
+                + result + ")";
     }
 
 }

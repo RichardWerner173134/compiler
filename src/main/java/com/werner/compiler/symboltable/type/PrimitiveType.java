@@ -8,5 +8,6 @@ public class PrimitiveType extends Type {
     }
 
     public final static Type INT_TYPE = new PrimitiveType("int");
-    public final static Type BOOLEAN_TYPE = new PrimitiveType("boolean");
+    public final static Type BOOLEAN_TYPE = new PrimitiveType("bool");
+    public final static Type STRING_TYPE = new PrimitiveType("string");
 }

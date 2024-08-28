@@ -2,7 +2,7 @@ package com.werner.compiler.ast.declaration;
 
 import com.werner.compiler.ast.Identifier;
 import com.werner.compiler.ast.expressions.type.AbstractTypeExpression;
-import com.werner.compiler.ast.visitor.Visitor;
+import com.werner.compiler.symboltable.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public class VariableDeclaration extends Declaration {

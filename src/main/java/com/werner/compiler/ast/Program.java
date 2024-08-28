@@ -1,7 +1,7 @@
 package com.werner.compiler.ast;
 
 import com.werner.compiler.ast.statements.Statement;
-import com.werner.compiler.ast.visitor.Visitor;
+import com.werner.compiler.symboltable.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class Program extends Node {
 
     @Override
     public void accept(Visitor visitor) {
-
+        visitor.visit(this);
     }
 
     @Override

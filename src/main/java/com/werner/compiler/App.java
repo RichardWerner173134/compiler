@@ -3,6 +3,9 @@ package com.werner.compiler;
 import com.werner.compiler.ast.Program;
 import com.werner.compiler.generated.Lexer;
 import com.werner.compiler.generated.Parser;
+import com.werner.compiler.symboltable.SymbolTable;
+import com.werner.compiler.symboltable.visitor.NameAnalysisVisitor;
+import com.werner.compiler.symboltable.visitor.Visitor;
 import java_cup.runtime.Symbol;
 
 import java.io.FileNotFoundException;
@@ -26,6 +29,9 @@ public class App
             Program program = (Program) parse.value;
             String treeVisualization = program.print(0);
             System.out.println(treeVisualization);
+
+            Visitor visitor = new NameAnalysisVisitor();
+            visitor.visit(program);
         } catch (Exception e) {
             e.printStackTrace();
         }

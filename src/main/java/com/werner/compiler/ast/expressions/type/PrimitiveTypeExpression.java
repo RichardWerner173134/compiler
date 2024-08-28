@@ -1,7 +1,7 @@
 package com.werner.compiler.ast.expressions.type;
 
 import com.werner.compiler.ast.PrimitiveType;
-import com.werner.compiler.ast.visitor.Visitor;
+import com.werner.compiler.symboltable.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public class PrimitiveTypeExpression extends AbstractTypeExpression {

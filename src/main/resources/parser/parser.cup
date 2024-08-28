@@ -8,6 +8,7 @@ import com.werner.compiler.ast.statements.AssignStatement;
 import com.werner.compiler.ast.statements.EmptyStatement;
 import com.werner.compiler.ast.statements.Statement;
 import com.werner.compiler.ast.statements.WhileStatement;
+import com.werner.compiler.ast.statements.ProcedureCall;
 import com.werner.compiler.ast.expressions.Expression;
 import com.werner.compiler.ast.expressions.BinaryExpression;
 import com.werner.compiler.ast.Identifier;
@@ -113,6 +114,7 @@ nonterminal         EmptyStatement                  empty_statement;
 nonterminal         VariableDeclarationStatement    variable_declaration_statement;
 nonterminal         ReturnStatement                 return_statement;
 nonterminal         FunctionCall                    function_call;
+nonterminal         ProcedureCall                   procedure_call;
 
 nonterminal         IfStatement                     if_statement;
 nonterminal         WhileStatement                  while_statement;
@@ -131,31 +133,39 @@ nonterminal         FunctionDeclaration             function_declaration;
 
 /* ----------------------------Grammar Section-------------------- */
 
-    program             ::= LCURLYBRACE statement_list:stmnts RCURLYBRACE
+    program             ::= statement_list:stmnts
                         {: RESULT = new Program(new ComplexSymbolFactory.Location(stmntsleft, stmntsright), stmnts); :}
                         ;
 
     statement_list      ::= /* epsilon */
                         {: RESULT = new ArrayList(); :}
 
-                        |   statement_list:statement_list statement:statement
-                        {: statement_list.add(statement); RESULT = statement_list; :}
+                        |   statement:statement statement_list:statement_list
+                        {: statement_list.add(0, statement); RESULT = statement_list; :}
                         ;
 
     statement           ::= assign_statement:assign_statement
                         {: RESULT = assign_statement; :}
                         |   empty_statement:empty_statement
                         {: RESULT = empty_statement; :}
+                        |   procedure_call:procedure_call
+                        {: RESULT = procedure_call; :}
+
+                        /* control structures */
                         |   if_statement:if_statement
                         {: RESULT = if_statement; :}
                         |   while_statement:while_statement
                         {: RESULT = while_statement; :}
+
+                        /* declarations */
                         |   variable_declaration_statement:variable_declaration_statement
                         {: RESULT = variable_declaration_statement; :}
                         |   type_declaration:type_declaration
                         {: RESULT = type_declaration; :}
                         |   function_declaration:function_declaration
                         {: RESULT = function_declaration; :}
+
+                        /* others */
                         |   return_statement:return_statement
                         {: RESULT = return_statement; :}
                         ;
@@ -210,12 +220,20 @@ nonterminal         FunctionDeclaration             function_declaration;
                             ); :}
                             ;
 
-    return_statement    ::= RETURN:return_keyword expr:expression
+    return_statement    ::= RETURN:return_keyword expr:expression SEMICOLON
                         {: RESULT = new ReturnStatement(
                                 new ComplexSymbolFactory.Location(return_keywordleft, return_keywordright),
                                 expression
                             );
                         :}
+                        ;
+
+    procedure_call      ::= IDENT:identifier LPAREN:lparen expression_list:expression_list RPAREN
+                        {: RESULT = new ProcedureCall(
+                                new ComplexSymbolFactory.Location(identifierleft, identifierright),
+                                new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier),
+                                expression_list
+                            ); :}
                         ;
 
     function_call       ::= IDENT:identifier LPAREN:lparen expression_list:expression_list RPAREN
@@ -306,7 +324,7 @@ nonterminal         FunctionDeclaration             function_declaration;
                         |   variable_declaration:declaration
                         {: List<VariableDeclaration> list = new ArrayList(); list.add(declaration); RESULT = list; :}
                         |   variable_declaration:variable_declaration COMMA:comma variable_declaration_list:list
-                        {: list.add(variable_declaration); RESULT = list; :}
+                        {: list.add(0, variable_declaration); RESULT = list; :}
                         ;
 
 /* ----------------------------Expression Section-------------------- */
@@ -315,8 +333,8 @@ nonterminal         FunctionDeclaration             function_declaration;
                         {: RESULT = new ArrayList(); :}
                         | expr:expression
                         {: List<Expression> list = new ArrayList(); list.add(expression); RESULT = list; :}
-                        | expression_list:expression_list COMMA expr:expression
-                        {: expression_list.add(expression); RESULT = expression_list; :}
+                        | expr:expression COMMA expression_list:expression_list
+                        {: expression_list.add(0, expression); RESULT = expression_list; :}
                         ;
 
     expr                ::= expr:expression PLUS:operator term:term

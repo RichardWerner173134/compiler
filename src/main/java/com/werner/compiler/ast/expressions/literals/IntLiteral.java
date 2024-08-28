@@ -1,12 +1,8 @@
 package com.werner.compiler.ast.expressions.literals;
 
-import com.werner.compiler.ast.Node;
 import com.werner.compiler.ast.expressions.Expression;
-import com.werner.compiler.ast.visitor.Visitor;
+import com.werner.compiler.symboltable.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
-
-import java.util.Collections;
-import java.util.List;
 
 public class IntLiteral extends Expression {
     public final Integer value;

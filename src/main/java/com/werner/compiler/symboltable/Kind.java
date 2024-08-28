@@ -1,4 +1,6 @@
 package com.werner.compiler.symboltable;
 
-public class Info {
+public enum Kind {
+    FUNCTION,
+    TYPE
 }

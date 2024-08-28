@@ -1,6 +1,6 @@
 package com.werner.compiler.ast.statements;
 
-import com.werner.compiler.ast.visitor.Visitor;
+import com.werner.compiler.symboltable.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public class EmptyStatement extends Statement {

@@ -3,7 +3,7 @@ package com.werner.compiler.ast.declaration;
 import com.werner.compiler.ast.Identifier;
 import com.werner.compiler.ast.expressions.type.AbstractTypeExpression;
 import com.werner.compiler.ast.statements.Statement;
-import com.werner.compiler.ast.visitor.Visitor;
+import com.werner.compiler.symboltable.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class FunctionDeclaration extends Declaration {
 
                 // return type
                 + result + "\t" + "Return(\n"
-                + result + "\t" + returnType.print(depth + 1) + "\n"
+                + returnType.print(depth + 2) + "\n"
                 + result + "\t" + ")\n"
 
                 // statements
@@ -67,6 +67,6 @@ public class FunctionDeclaration extends Declaration {
 
     @Override
     public void accept(Visitor visitor) {
-
+        visitor.visit(this);
     }
 }

@@ -37,7 +37,10 @@ public class IfStatement extends Statement {
         result.append("\t".repeat(Math.max(0, depth)));
 
         return result + "IfStatement(\n"
-                + condition.print(depth + 1) + "\n"
+
+                + result + "\t" + "Condition(\n"
+                + condition.print(depth + 2) + "\n"
+                + result + "\t" + ")\n"
 
                 + result + "\t" + "StatementsIf[" + "\n"
                 + ifStatements

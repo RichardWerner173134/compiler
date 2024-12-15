@@ -5,18 +5,14 @@ import java_cup.runtime.ComplexSymbolFactory;
 
 public class ArrayTypeExpression extends AbstractTypeExpression {
 
-    public final int indexSize;
-
     public final AbstractTypeExpression typeExpression;
 
     public ArrayTypeExpression(
             ComplexSymbolFactory.Location location,
-            int indexSize,
             AbstractTypeExpression typeExpression
     ) {
         super(location);
 
-        this.indexSize = indexSize;
         this.typeExpression = typeExpression;
     }
 
@@ -27,7 +23,7 @@ public class ArrayTypeExpression extends AbstractTypeExpression {
 
     @Override
     public String toString() {
-        return "Arr(" + typeExpression + "[" + indexSize + "]" + ")";
+        return "Arr(" + typeExpression + ")";
     }
 
     @Override
@@ -36,7 +32,7 @@ public class ArrayTypeExpression extends AbstractTypeExpression {
         result.append("\t".repeat(Math.max(0, depth)));
 
         return result + "Arr(\n"
-                + typeExpression.print(depth + 1) + "[" + indexSize + "]" + "\n"
+                + typeExpression.print(depth + 1) + "\n"
                 + result + ")";
     }
 }

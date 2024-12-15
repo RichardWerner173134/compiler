@@ -66,7 +66,7 @@ public class NameAnalysisVisitor extends EmptyVisitor {
 
         if (expression instanceof ArrayTypeExpression) {
             Type baseType = getType(((ArrayTypeExpression) expression).typeExpression);
-            Type result = new ArrayType(((ArrayTypeExpression) expression).indexSize, baseType);
+            Type result = new ArrayType(baseType);
             return result;
         }
 

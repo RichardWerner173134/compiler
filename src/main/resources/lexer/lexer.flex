@@ -74,6 +74,9 @@ INT_LIT = 0 | [1-9][0-9]*
    between A and Z, a and z, zero and nine, or an underscore. */
 IDENT = [A-Za-z_][A-Za-z_0-9]*
 
+/*matches string-literal on a single line*/
+STRING_LIT = \"([^\\\"]|\\.)*\"
+
 %%
 /* ------------------------Lexical Rules Section---------------------- */
 
@@ -101,11 +104,17 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
     "/"                { return symbol(sym.SLASH); }
     "("                { return symbol(sym.LPAREN); }
     ")"                { return symbol(sym.RPAREN); }
+    "=="               { return symbol(sym.EQUALS); }
+    "!="               { return symbol(sym.NEQUALS); }
     "="                { return symbol(sym.ASGN); }
     "{"                { return symbol(sym.LCURLYBRACE);}
     "}"                { return symbol(sym.RCURLYBRACE);}
     "["                { return symbol(sym.LSQUAREBRACKET);}
     "]"                { return symbol(sym.RSQUAREBRACKET);}
+    "<="               { return symbol(sym.LESSOREQUAL);}
+    ">="               { return symbol(sym.MOREOREQUAL);}
+    "<"               { return symbol(sym.LESS);}
+    ">"               { return symbol(sym.MORE);}
 
     "true"             { return symbol(sym.TRUE);}
     "false"            { return symbol(sym.FALSE);}
@@ -129,7 +138,14 @@ IDENT = [A-Za-z_][A-Za-z_0-9]*
     "function"         {return symbol(sym.FUNCTION);}
     "return"           {return symbol(sym.RETURN);}
 
+    "new"              {return symbol(sym._NEW);}
+
     {INT_LIT}          { return symbol(sym.NUMBER, new Integer(yytext())); }
+
+    {STRING_LIT}       {
+          String literal = yytext();
+          return symbol(sym.STRING_LITERAL, literal.substring(1, literal.length() - 1));
+      }
 
     /* If an identifier is found print it out, return the token ID
        that represents an identifier and the default value one that is

@@ -8,39 +8,47 @@ package com.werner.compiler.generated;
 /** CUP generated class containing symbol constants. */
 public class sym {
   /* terminals */
-  public static final int IDENT = 20;
-  public static final int ELSE = 17;
-  public static final int ASGN = 11;
-  public static final int SEMICOLON = 2;
-  public static final int PLUS = 5;
-  public static final int RPAREN = 10;
-  public static final int WHILE = 18;
-  public static final int STAR = 7;
+  public static final int FUNCTION = 38;
+  public static final int STRING_LITERAL = 26;
+  public static final int ASGN = 17;
+  public static final int EQUALS = 11;
   public static final int SLASH = 8;
-  public static final int RETURN = 32;
-  public static final int FUNCTION = 31;
-  public static final int TRUE = 21;
-  public static final int DOUBLECOLON = 3;
-  public static final int IF = 16;
+  public static final int INTEGER = 32;
   public static final int LPAREN = 9;
-  public static final int OF = 28;
-  public static final int RCURLYBRACE = 13;
-  public static final int LSQUAREBRACKET = 14;
-  public static final int BOOLEAN = 26;
-  public static final int TYPE = 30;
-  public static final int STRING = 24;
-  public static final int COMMA = 4;
-  public static final int NUMBER = 19;
-  public static final int EOF = 0;
-  public static final int RECORD = 29;
-  public static final int FALSE = 22;
+  public static final int ARRAY = 34;
+  public static final int LESS = 15;
   public static final int MINUS = 6;
+  public static final int STAR = 7;
+  public static final int RPAREN = 10;
+  public static final int LSQUAREBRACKET = 20;
+  public static final int SEMICOLON = 2;
+  public static final int RECORD = 36;
+  public static final int LCURLYBRACE = 18;
+  public static final int NEQUALS = 12;
+  public static final int TYPE = 37;
+  public static final int COMMA = 4;
+  public static final int LESSOREQUAL = 13;
+  public static final int MOREOREQUAL = 14;
+  public static final int PLUS = 5;
+  public static final int IF = 22;
+  public static final int OF = 35;
+  public static final int EOF = 0;
+  public static final int BOOLEAN = 33;
+  public static final int RETURN = 39;
+  public static final int TRUE = 28;
+  public static final int _NEW = 40;
   public static final int error = 1;
-  public static final int LCURLYBRACE = 12;
-  public static final int INTEGER = 25;
-  public static final int RSQUAREBRACKET = 15;
-  public static final int ARRAY = 27;
-  public static final int VAR = 23;
+  public static final int NUMBER = 25;
+  public static final int IDENT = 27;
+  public static final int RSQUAREBRACKET = 21;
+  public static final int ELSE = 23;
+  public static final int WHILE = 24;
+  public static final int STRING = 31;
+  public static final int FALSE = 29;
+  public static final int RCURLYBRACE = 19;
+  public static final int VAR = 30;
+  public static final int MORE = 16;
+  public static final int DOUBLECOLON = 3;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -53,6 +61,12 @@ public class sym {
   "SLASH",
   "LPAREN",
   "RPAREN",
+  "EQUALS",
+  "NEQUALS",
+  "LESSOREQUAL",
+  "MOREOREQUAL",
+  "LESS",
+  "MORE",
   "ASGN",
   "LCURLYBRACE",
   "RCURLYBRACE",
@@ -62,6 +76,7 @@ public class sym {
   "ELSE",
   "WHILE",
   "NUMBER",
+  "STRING_LITERAL",
   "IDENT",
   "TRUE",
   "FALSE",
@@ -74,7 +89,8 @@ public class sym {
   "RECORD",
   "TYPE",
   "FUNCTION",
-  "RETURN"
+  "RETURN",
+  "_NEW"
   };
 }
 

@@ -35,7 +35,7 @@ public class FunctionCall extends Expression {
 
         return result + "FunctionCall(\n"
                 + identifier.print(depth + 1) + "\n"
-                + argumentList.stream().map(a -> a.print(depth + 2)).collect(Collectors.joining("\n")) + "\n"
+                + argumentList.stream().map(a -> a.print(depth + 1)).collect(Collectors.joining("\n")) + "\n"
                 + result + ")";
     }
 

@@ -29,6 +29,9 @@ import com.werner.compiler.ast.declaration.FunctionDeclaration;
 import com.werner.compiler.ast.statements.VariableDeclarationStatement;
 import com.werner.compiler.ast.statements.ReturnStatement;
 import com.werner.compiler.ast.expressions.FunctionCall;
+import com.werner.compiler.ast.expressions.literals.StringLiteral;
+import com.werner.compiler.ast.expressions.initializer.ArrayExpression;
+import com.werner.compiler.ast.expressions.initializer.AbstractObjectInitialization;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -92,8 +95,9 @@ parser code {:
 
 /* ------------Declaration of Terminals and Non Terminals Section----------- */
 
-terminal                                            SEMICOLON, DOUBLECOLON, COMMA, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, ASGN, LCURLYBRACE, RCURLYBRACE, LSQUAREBRACKET, RSQUAREBRACKET, IF, ELSE, WHILE;
+terminal                                            SEMICOLON, DOUBLECOLON, COMMA, PLUS, MINUS, STAR, SLASH, LPAREN, RPAREN, EQUALS, NEQUALS, LESSOREQUAL, MOREOREQUAL, LESS, MORE, ASGN, LCURLYBRACE, RCURLYBRACE, LSQUAREBRACKET, RSQUAREBRACKET, IF, ELSE, WHILE;
 terminal            Integer                         NUMBER;
+terminal            String                          STRING_LITERAL;
 terminal            String                          IDENT;
 terminal                                            TRUE, FALSE;
 terminal                                            VAR;
@@ -103,6 +107,7 @@ terminal                                            RECORD;
 terminal                                            TYPE;
 terminal                                            FUNCTION;
 terminal                                            RETURN;
+terminal                                            _NEW;
 
 nonterminal         Expression                      expr, term, factor;
 nonterminal         List<Expression>                expression_list;
@@ -131,6 +136,8 @@ nonterminal         RecordTypeExpression            record_type_expression;
 nonterminal         TypeDeclaration                 type_declaration;
 nonterminal         FunctionDeclaration             function_declaration;
 
+nonterminal         AbstractObjectInitialization    object_initialization;
+
 /* ----------------------------Grammar Section-------------------- */
 
     program             ::= statement_list:stmnts
@@ -146,9 +153,9 @@ nonterminal         FunctionDeclaration             function_declaration;
 
     statement           ::= assign_statement:assign_statement
                         {: RESULT = assign_statement; :}
-                        |   empty_statement:empty_statement
+                        |   empty_statement:empty_statement SEMICOLON
                         {: RESULT = empty_statement; :}
-                        |   procedure_call:procedure_call
+                        |   procedure_call:procedure_call SEMICOLON
                         {: RESULT = procedure_call; :}
 
                         /* control structures */
@@ -243,6 +250,7 @@ nonterminal         FunctionDeclaration             function_declaration;
                                 expression_list
                             ); :}
                         ;
+
 /* ----------------------------Declaration Section-------------------- */
 
     variable_declaration::= IDENT:identifier DOUBLECOLON:doublecolon type_expression:type_expression
@@ -287,16 +295,14 @@ nonterminal         FunctionDeclaration             function_declaration;
                             ); :}
                         ;
 
-    array_type_expression ::= ARRAY:array LSQUAREBRACKET:lsb NUMBER:number RSQUAREBRACKET:rsb OF:of type_expression:type_expression
+    array_type_expression ::= ARRAY:array OF:of type_expression:type_expression
                         {: RESULT = new ArrayTypeExpression(
                                 new ComplexSymbolFactory.Location(arrayleft, arrayright),
-                                number,
                                 type_expression
                             ); :}
-                        |   ARRAY:array LSQUAREBRACKET:lsb NUMBER:number RSQUAREBRACKET:rsb OF:of IDENT:identifier
+                        |   ARRAY:array OF:of IDENT:identifier
                         {: RESULT = new ArrayTypeExpression(
                                 new ComplexSymbolFactory.Location(arrayleft, arrayright),
-                                number,
                                 new NamedTypeExpression(
                                     new ComplexSymbolFactory.Location(identifierleft, identifierright),
                                     new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier)
@@ -341,10 +347,39 @@ nonterminal         FunctionDeclaration             function_declaration;
                         {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.ADD, expression, term); :}
                         |   expr:expression MINUS:operator term:term
                         {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.SUB, expression, term); :}
+                        |   expr:expression EQUALS:operator term:term
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.EQ, expression, term); :}
+                        |   expr:expression NEQUALS:operator term:term
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.NEQ, expression, term); :}
+                        |   expr:expression LESSOREQUAL:operator term:term
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.LESSOREQUAL, expression, term); :}
+                        |   expr:expression MOREOREQUAL:operator term:term
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.MOREOREQUAL, expression, term); :}
+                        |   expr:expression MORE:operator term:term
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.MORE, expression, term); :}
+                        |   expr:expression LESS:operator term:term
+                        {: RESULT = new BinaryExpression(new ComplexSymbolFactory.Location(operatorleft, operatorright), Operator.LESS, expression, term); :}
                         |   term:term
                         {: RESULT = term; :}
                         |   function_call:function_call
                         {: RESULT = function_call; :}
+                        |   STRING_LITERAL:string_literal
+                        {: RESULT = new StringLiteral(new ComplexSymbolFactory.Location(string_literalleft, string_literalright), string_literal); :}
+                        |   _NEW object_initialization:object_initialization
+                        {: RESULT = object_initialization; :}
+                        ;
+
+    object_initialization ::=    ARRAY:array LSQUAREBRACKET:lsquarebracket expr:expression RSQUAREBRACKET:rsquarebracket OF type_expression:type_expression RSQUAREBRACKET
+                            {: RESULT = new ArrayExpression(new ComplexSymbolFactory.Location(arrayleft, arrayright), expression, type_expression); :}
+                            |   ARRAY:array LSQUAREBRACKET:lsquarebracket expr:expression RSQUAREBRACKET:rsquarebracket OF IDENT:identifier
+                            {: RESULT = new ArrayExpression(
+                                    new ComplexSymbolFactory.Location(arrayleft, arrayright),
+                                    expression,
+                                    new NamedTypeExpression(
+                                        new ComplexSymbolFactory.Location(identifierleft, identifierright),
+                                        new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier)
+                                    )
+                                ); :}
                         ;
 
     term                ::= term:term STAR:operator factor:factor

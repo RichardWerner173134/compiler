@@ -1,6 +1,5 @@
-function myFunction123 (a: string, b: int, c: record { d: int, e: string }): array[20] of int {
-    var x: bool;
-    return x;
-}
 
-x = myFunction123(x, y, z);
+var x: bool;
+
+x = false + true;
+

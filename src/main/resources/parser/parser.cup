@@ -32,6 +32,7 @@ import com.werner.compiler.ast.expressions.FunctionCall;
 import com.werner.compiler.ast.expressions.literals.StringLiteral;
 import com.werner.compiler.ast.expressions.initializer.ArrayExpression;
 import com.werner.compiler.ast.expressions.initializer.AbstractObjectInitialization;
+import com.werner.compiler.ast.declaration.ProcedureDeclaration;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -108,6 +109,7 @@ terminal                                            TYPE;
 terminal                                            FUNCTION;
 terminal                                            RETURN;
 terminal                                            _NEW;
+terminal                                            VOID;
 
 nonterminal         Expression                      expr, term, factor;
 nonterminal         List<Expression>                expression_list;
@@ -135,6 +137,7 @@ nonterminal         RecordTypeExpression            record_type_expression;
 
 nonterminal         TypeDeclaration                 type_declaration;
 nonterminal         FunctionDeclaration             function_declaration;
+nonterminal         ProcedureDeclaration            procedure_declaration;
 
 nonterminal         AbstractObjectInitialization    object_initialization;
 
@@ -171,6 +174,8 @@ nonterminal         AbstractObjectInitialization    object_initialization;
                         {: RESULT = type_declaration; :}
                         |   function_declaration:function_declaration
                         {: RESULT = function_declaration; :}
+                        |   procedure_declaration:procedure_declaration
+                        {: RESULT = procedure_declaration; :}
 
                         /* others */
                         |   return_statement:return_statement
@@ -225,7 +230,16 @@ nonterminal         AbstractObjectInitialization    object_initialization;
                                 type_expression,
                                 statement_list
                             ); :}
-                            ;
+                        ;
+
+    procedure_declaration::= FUNCTION:function IDENT:identifier LPAREN:lparen variable_declaration_list:variable_declaration_list RPAREN DOUBLECOLON VOID:_VOID LCURLYBRACE statement_list:statement_list RCURLYBRACE
+                        {: RESULT = new ProcedureDeclaration(
+                                new ComplexSymbolFactory.Location(functionleft, functionright),
+                                new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier),
+                                variable_declaration_list,
+                                statement_list
+                            ); :}
+                        ;
 
     return_statement    ::= RETURN:return_keyword expr:expression SEMICOLON
                         {: RESULT = new ReturnStatement(
@@ -256,10 +270,7 @@ nonterminal         AbstractObjectInitialization    object_initialization;
     variable_declaration::= IDENT:identifier DOUBLECOLON:doublecolon type_expression:type_expression
                         {: RESULT = new VariableDeclaration(
                                 new ComplexSymbolFactory.Location(identifierleft, identifierright),
-                                new Identifier(
-                                    new ComplexSymbolFactory.Location(identifierleft, identifierright),
-                                    identifier
-                                ),
+                                new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier),
                                 type_expression
                             );
                         :}

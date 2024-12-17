@@ -1,7 +1,7 @@
 package com.werner.compiler.ast.statements;
 
 import com.werner.compiler.ast.expressions.Expression;
-import com.werner.compiler.symboltable.visitor.Visitor;
+import com.werner.compiler.semanticanalysis.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 import java.util.List;
@@ -48,6 +48,6 @@ public class WhileStatement extends Statement {
 
     @Override
     public void accept(Visitor visitor) {
-
+        visitor.visit(this);
     }
 }

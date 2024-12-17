@@ -1,4 +1,4 @@
-package com.werner.compiler.symboltable.type;
+package com.werner.compiler.semanticanalysis.type;
 
 public class PrimitiveType extends Type {
     public final String typeName;

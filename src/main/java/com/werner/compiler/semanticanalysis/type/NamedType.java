@@ -1,7 +1,7 @@
-package com.werner.compiler.symboltable.type;
+package com.werner.compiler.semanticanalysis.type;
 
 
-import com.werner.compiler.symboltable.Identifier;
+import com.werner.compiler.semanticanalysis.Identifier;
 
 public class NamedType extends Type {
     public final Identifier identifier;

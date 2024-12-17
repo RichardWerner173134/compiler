@@ -1,4 +1,4 @@
-package com.werner.compiler.symboltable.type;
+package com.werner.compiler.semanticanalysis.type;
 
 import java.util.ArrayList;
 import java.util.List;

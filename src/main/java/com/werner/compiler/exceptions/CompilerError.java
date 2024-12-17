@@ -23,11 +23,19 @@ public class CompilerError extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public static CompilerError RedeclarationAsType(ComplexSymbolFactory.Location location, String name) {
-        return new CompilerError("Type " + name + " is already delared. Error at line=" + location.getLine() + ", column=" + location.getColumn());
+    public static CompilerError RedeclarationOfType(ComplexSymbolFactory.Location location, String name) {
+        return new CompilerError("Cant declare Type " + name + ": Duplicate identifier. Error at line=" + location.getLine() + ", column=" + location.getColumn());
+    }
+
+    public static CompilerError RedeclarationOfVariable(ComplexSymbolFactory.Location location, String name) {
+        return new CompilerError("Cant declare variable " + name + ": Duplicate identifier. Error at line=" + location.getLine() + ", column=" + location.getColumn());
     }
 
     public static CompilerError UnknownTypeReference(ComplexSymbolFactory.Location location, String typeName) {
         return new CompilerError("Unknown type " + typeName + ". Error at line=" + location.getLine() + ", column=" + location.getColumn());
+    }
+
+    public static CompilerError InvalidDeclarationLocation(ComplexSymbolFactory.Location location, String typeName) {
+        return new CompilerError("Cant declare " + typeName + ": Global variables not available. Error at line=" + location.getLine() + ", column=" + location.getColumn());
     }
 }

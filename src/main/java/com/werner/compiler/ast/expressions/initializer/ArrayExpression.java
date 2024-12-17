@@ -2,7 +2,7 @@ package com.werner.compiler.ast.expressions.initializer;
 
 import com.werner.compiler.ast.expressions.Expression;
 import com.werner.compiler.ast.expressions.type.AbstractTypeExpression;
-import com.werner.compiler.symboltable.visitor.Visitor;
+import com.werner.compiler.semanticanalysis.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public class ArrayExpression extends AbstractObjectInitialization {

@@ -1,4 +1,4 @@
-package com.werner.compiler.symboltable.type;
+package com.werner.compiler.semanticanalysis.type;
 
 public class ArrayType extends Type {
     public Type baseType;

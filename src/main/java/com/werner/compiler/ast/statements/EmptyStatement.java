@@ -1,6 +1,6 @@
 package com.werner.compiler.ast.statements;
 
-import com.werner.compiler.symboltable.visitor.Visitor;
+import com.werner.compiler.semanticanalysis.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public class EmptyStatement extends Statement {
@@ -24,6 +24,6 @@ public class EmptyStatement extends Statement {
 
     @Override
     public void accept(Visitor visitor) {
-
+        visitor.visit(this);
     }
 }

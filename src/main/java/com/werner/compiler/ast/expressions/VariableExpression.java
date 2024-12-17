@@ -1,7 +1,7 @@
 package com.werner.compiler.ast.expressions;
 
 import com.werner.compiler.ast.Identifier;
-import com.werner.compiler.symboltable.visitor.Visitor;
+import com.werner.compiler.semanticanalysis.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public class VariableExpression extends Expression {

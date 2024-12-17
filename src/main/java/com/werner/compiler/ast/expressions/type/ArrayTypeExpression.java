@@ -1,6 +1,6 @@
 package com.werner.compiler.ast.expressions.type;
 
-import com.werner.compiler.symboltable.visitor.Visitor;
+import com.werner.compiler.semanticanalysis.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public class ArrayTypeExpression extends AbstractTypeExpression {

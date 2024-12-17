@@ -1,4 +1,4 @@
-package com.werner.compiler.symboltable;
+package com.werner.compiler.semanticanalysis;
 
 public class Identifier {
     public final String identifier;

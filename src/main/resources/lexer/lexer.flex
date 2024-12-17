@@ -113,8 +113,8 @@ STRING_LIT = \"([^\\\"]|\\.)*\"
     "]"                { return symbol(sym.RSQUAREBRACKET);}
     "<="               { return symbol(sym.LESSOREQUAL);}
     ">="               { return symbol(sym.MOREOREQUAL);}
-    "<"               { return symbol(sym.LESS);}
-    ">"               { return symbol(sym.MORE);}
+    "<"                { return symbol(sym.LESS);}
+    ">"                { return symbol(sym.MORE);}
 
     "true"             { return symbol(sym.TRUE);}
     "false"            { return symbol(sym.FALSE);}
@@ -136,6 +136,7 @@ STRING_LIT = \"([^\\\"]|\\.)*\"
     "type"             {return symbol(sym.TYPE);}
 
     "function"         {return symbol(sym.FUNCTION);}
+    "void"             {return symbol(sym.VOID);}
     "return"           {return symbol(sym.RETURN);}
 
     "new"              {return symbol(sym._NEW);}

@@ -40,6 +40,7 @@ public class sym {
   public static final int error = 1;
   public static final int NUMBER = 25;
   public static final int IDENT = 27;
+  public static final int VOID = 41;
   public static final int RSQUAREBRACKET = 21;
   public static final int ELSE = 23;
   public static final int WHILE = 24;
@@ -90,7 +91,8 @@ public class sym {
   "TYPE",
   "FUNCTION",
   "RETURN",
-  "_NEW"
+  "_NEW",
+  "VOID"
   };
 }
 

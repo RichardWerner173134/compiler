@@ -1,9 +1,10 @@
-package com.werner.compiler.symboltable.info;
+package com.werner.compiler.semanticanalysis.info;
 
-import com.werner.compiler.symboltable.Kind;
-import com.werner.compiler.symboltable.type.Type;
+import com.werner.compiler.semanticanalysis.Kind;
+import com.werner.compiler.semanticanalysis.type.Type;
 
 public class TypeInfo extends Info {
+
     public final Type type;
     public final Kind kind;
 

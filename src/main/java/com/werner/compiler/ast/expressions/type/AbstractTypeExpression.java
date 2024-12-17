@@ -1,7 +1,7 @@
 package com.werner.compiler.ast.expressions.type;
 
 import com.werner.compiler.ast.expressions.Expression;
-import com.werner.compiler.symboltable.type.Type;
+import com.werner.compiler.semanticanalysis.type.Type;
 import java_cup.runtime.ComplexSymbolFactory;
 
 public abstract class AbstractTypeExpression extends Expression {

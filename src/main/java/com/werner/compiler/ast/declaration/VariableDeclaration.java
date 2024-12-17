@@ -1,11 +1,20 @@
 package com.werner.compiler.ast.declaration;
 
 import com.werner.compiler.ast.Identifier;
+import com.werner.compiler.ast.Node;
 import com.werner.compiler.ast.expressions.type.AbstractTypeExpression;
-import com.werner.compiler.symboltable.visitor.Visitor;
+import com.werner.compiler.semanticanalysis.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
-public class VariableDeclaration extends Declaration {
+/**
+ * VariableDeclaration has the production "variable_declaration -> name: type"
+ *
+ * this is not a statement
+ *
+ * @link com.werner.compiler.ast.statements.VariableDeclarationStatement
+ *
+ */
+public class VariableDeclaration extends Node {
 
     public final Identifier identifier;
 

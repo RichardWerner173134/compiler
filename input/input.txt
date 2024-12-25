@@ -1,6 +1,9 @@
 type type123 = int;
-
-function y (xxx: string): void {
-
-    xxx = xxx + 5;
+y(42);
+function y (xxx: int): void {
+    var s : string;
+    y(s);
 }
+
+
+

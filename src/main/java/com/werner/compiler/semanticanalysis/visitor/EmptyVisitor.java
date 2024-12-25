@@ -6,6 +6,7 @@ import com.werner.compiler.ast.declaration.ProcedureDeclaration;
 import com.werner.compiler.ast.declaration.TypeDeclaration;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
 import com.werner.compiler.ast.expressions.BinaryExpression;
+import com.werner.compiler.ast.expressions.FunctionCall;
 import com.werner.compiler.ast.expressions.type.ArrayTypeExpression;
 import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
 import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
@@ -55,11 +56,6 @@ public class EmptyVisitor implements Visitor {
     }
 
     @Override
-    public void visit(ProcedureCall procedureCall) {
-
-    }
-
-    @Override
     public void visit(ReturnStatement returnStatement) {
 
     }
@@ -71,6 +67,16 @@ public class EmptyVisitor implements Visitor {
 
     @Override
     public void visit(WhileStatement whileStatement) {
+
+    }
+
+    @Override
+    public void visit(FunctionCall functionCall) {
+
+    }
+
+    @Override
+    public void visit(ProcedureCall procedureCall) {
 
     }
 

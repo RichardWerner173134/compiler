@@ -5,16 +5,14 @@ import com.werner.compiler.ast.declaration.FunctionDeclaration;
 import com.werner.compiler.ast.declaration.ProcedureDeclaration;
 import com.werner.compiler.ast.declaration.TypeDeclaration;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
+import com.werner.compiler.ast.expressions.FunctionCall;
 import com.werner.compiler.ast.expressions.type.*;
 import com.werner.compiler.ast.statements.*;
 import com.werner.compiler.exceptions.CompilerError;
 import com.werner.compiler.semanticanalysis.Symbol;
 import com.werner.compiler.semanticanalysis.Kind;
-import com.werner.compiler.semanticanalysis.info.Info;
+import com.werner.compiler.semanticanalysis.info.*;
 import com.werner.compiler.semanticanalysis.SymbolTable;
-import com.werner.compiler.semanticanalysis.info.ProcedureInfo;
-import com.werner.compiler.semanticanalysis.info.TypeInfo;
-import com.werner.compiler.semanticanalysis.info.VariableInfo;
 import com.werner.compiler.semanticanalysis.type.*;
 
 import java.util.ArrayList;
@@ -53,10 +51,18 @@ public class NameAnalysisVisitor extends EmptyVisitor {
 
         Type type = getType(functionDeclaration.returnType);
 
+        List<VariableInfo> parameterInfos = functionDeclaration.parametersList
+                .stream()
+                .map(parameter -> {
+                    Type parameterType = getType(parameter.typeExpression);
+                    return new VariableInfo(false, parameterType);
+                })
+                .toList();
+
         // function name
         symbolTable.enter(
                 new Symbol(functionDeclaration.identifier.name),
-                new TypeInfo(type, Kind.FUNCTION),
+                new FunctionInfo(type, parameterInfos),
                 CompilerError.RedeclarationOfType(functionDeclaration.location, functionDeclaration.identifier.name)
         );
 
@@ -84,10 +90,19 @@ public class NameAnalysisVisitor extends EmptyVisitor {
             throw CompilerError.InvalidDeclarationLocation(procedureDeclaration.location, procedureDeclaration.identifier.name);
         }
 
+        List<VariableInfo> parameterInfos = procedureDeclaration.parametersList
+                .stream()
+                .map(parameter -> {
+                    Type parameterType = getType(parameter.typeExpression);
+                    return new VariableInfo(false, parameterType);
+                })
+                .toList();
+
+
         // procedure name
         symbolTable.enter(
                 new Symbol(procedureDeclaration.identifier.name),
-                new ProcedureInfo(), // TODO this holds no information. maybe remove
+                new ProcedureInfo(parameterInfos),
                 CompilerError.RedeclarationOfType(procedureDeclaration.location, procedureDeclaration.identifier.name)
         );
 
@@ -189,6 +204,12 @@ public class NameAnalysisVisitor extends EmptyVisitor {
         // typecheck
         TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
         procedureCall.accept(typeAnalysisVisitor);
+    }
+
+    @Override
+    public void visit(FunctionCall functionCall) {
+        TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
+        functionCall.accept(typeAnalysisVisitor);
     }
 
     private Type getType(AbstractTypeExpression expression) {

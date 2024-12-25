@@ -83,4 +83,23 @@ public class CompilerError extends RuntimeException {
     public static CompilerError NoReturnAllowed(ComplexSymbolFactory.Location location) {
         return new CompilerError("Return statement is here not allowed. Error at line=" + location.getLine() + ", column=" + location.getColumn());
     }
+
+    public static CompilerError NotAFunction(ComplexSymbolFactory.Location location, String identifier) {
+        return new CompilerError("Mismatching reference. " + identifier + " is not a function. Error at line=" + location.getLine() + ", column=" + location.getColumn());
+    }
+
+    public static CompilerError TypeErrorFunctionCall(ComplexSymbolFactory.Location location, String parameterType, String argumentType) {
+        return new CompilerError("Mismatching types for function. Expected " + parameterType + ", but got " + argumentType
+                + ". Error at line=" + location.getLine() + ", column=" + location.getColumn());
+    }
+
+    public static CompilerError TypeErrorProcedureCall(ComplexSymbolFactory.Location location, String parameterType, String argumentType) {
+        return new CompilerError("Mismatching types for procedure. Expected " + parameterType + ", but got " + argumentType
+                + ". Error at line=" + location.getLine() + ", column=" + location.getColumn());
+    }
+
+    public static CompilerError InvalidArgumentCount(ComplexSymbolFactory.Location location, int argumentCount) {
+        return new CompilerError("No Matching function with " + argumentCount
+                + " arguments found. Error at line=" + location.getLine() + ", column=" + location.getColumn());
+    }
 }

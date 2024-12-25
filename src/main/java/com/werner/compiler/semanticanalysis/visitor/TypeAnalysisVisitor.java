@@ -3,10 +3,7 @@ package com.werner.compiler.semanticanalysis.visitor;
 import com.werner.compiler.ast.declaration.FunctionDeclaration;
 import com.werner.compiler.ast.declaration.ProcedureDeclaration;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
-import com.werner.compiler.ast.expressions.BinaryExpression;
-import com.werner.compiler.ast.expressions.Expression;
-import com.werner.compiler.ast.expressions.Operator;
-import com.werner.compiler.ast.expressions.VariableExpression;
+import com.werner.compiler.ast.expressions.*;
 import com.werner.compiler.ast.expressions.initializer.ArrayExpression;
 import com.werner.compiler.ast.expressions.literals.BooleanLiteral;
 import com.werner.compiler.ast.expressions.literals.IntLiteral;
@@ -24,7 +21,9 @@ import com.werner.compiler.exceptions.CompilerError;
 import com.werner.compiler.semanticanalysis.Kind;
 import com.werner.compiler.semanticanalysis.Symbol;
 import com.werner.compiler.semanticanalysis.SymbolTable;
+import com.werner.compiler.semanticanalysis.info.FunctionInfo;
 import com.werner.compiler.semanticanalysis.info.Info;
+import com.werner.compiler.semanticanalysis.info.ProcedureInfo;
 import com.werner.compiler.semanticanalysis.info.VariableInfo;
 import com.werner.compiler.semanticanalysis.type.ArrayType;
 import com.werner.compiler.semanticanalysis.type.NamedType;
@@ -86,11 +85,64 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
     }
 
     @Override
+    public void visit(FunctionCall functionCall) {
+        Symbol symbol = new Symbol(functionCall.identifier.name);
+        Info info = symbolTable.lookup(symbol);
+
+        if (info == null) {
+            throw CompilerError.UnknownIdentifier(functionCall.location, functionCall.identifier.name);
+        }
+
+        if (info.getKind() != Kind.FUNCTION) {
+            throw CompilerError.NotAFunction(functionCall.location, functionCall.identifier.name);
+        }
+
+        List<VariableInfo> parameters = ((FunctionInfo) info).parameters;
+        boolean argumentCountMatches = parameters.size() == functionCall.argumentList.size();
+        if (!argumentCountMatches) {
+            throw CompilerError.InvalidArgumentCount(functionCall.location, functionCall.argumentList.size());
+        }
+
+        for (int i = 0; i < parameters.size(); i++) {
+            VariableInfo parameter = parameters.get(i);
+
+            Expression argument = functionCall.argumentList.get(i);
+            Type argumentType = getType(argument);
+
+            if (!argumentType.equals(parameter.type)) {
+                throw CompilerError.TypeErrorFunctionCall(functionCall.location, parameter.type.toString(), argumentType.toString());
+            }
+        }
+    }
+
+    @Override
     public void visit(ProcedureCall procedureCall) {
         Symbol key = new Symbol(procedureCall.identifier.name);
         Info info = this.symbolTable.lookup(key);
         if (info == null) {
             throw CompilerError.UnknownIdentifier(procedureCall.location, key.identifier);
+        }
+
+        if (info.getKind() != Kind.PROCEDURE) {
+            throw CompilerError.NotAFunction(procedureCall.location, procedureCall.identifier.name);
+        }
+
+        List<VariableInfo> parameters = ((ProcedureInfo) info).parameters;
+
+        boolean argumentCountMatches = parameters.size() == procedureCall.argumentList.size();
+        if (!argumentCountMatches) {
+            throw CompilerError.InvalidArgumentCount(procedureCall.location, procedureCall.argumentList.size());
+        }
+
+        for (int i = 0; i < parameters.size(); i++) {
+            VariableInfo parameter = parameters.get(i);
+
+            Expression argument = procedureCall.argumentList.get(i);
+            Type argumentType = getType(argument);
+
+            if (!argumentType.equals(parameter.type)) {
+                throw CompilerError.TypeErrorProcedureCall(procedureCall.location, parameter.type.toString(), argumentType.toString());
+            }
         }
     }
 
@@ -173,6 +225,8 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
                     throw CompilerError.NoReturnAllowed(s.location);
                 });
     }
+
+
 
     private Type getType(Expression expression) {
         if (expression instanceof IntLiteral) {

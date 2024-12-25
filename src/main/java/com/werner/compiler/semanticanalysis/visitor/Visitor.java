@@ -6,6 +6,7 @@ import com.werner.compiler.ast.declaration.ProcedureDeclaration;
 import com.werner.compiler.ast.declaration.TypeDeclaration;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
 import com.werner.compiler.ast.expressions.BinaryExpression;
+import com.werner.compiler.ast.expressions.FunctionCall;
 import com.werner.compiler.ast.expressions.type.ArrayTypeExpression;
 import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
 import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
@@ -22,10 +23,12 @@ public interface Visitor {
     void visit(AssignStatement assignStatement);
     void visit(EmptyStatement emptyStatement);
     void visit(IfStatement ifStatement);
-    void visit(ProcedureCall procedureCall);
     void visit(ReturnStatement returnStatement);
     void visit(VariableDeclarationStatement variableDeclarationStatement);
     void visit(WhileStatement whileStatement);
+
+    void visit(FunctionCall functionCall);
+    void visit(ProcedureCall procedureCall);
 
     void visit(ArrayTypeExpression arrayTypeExpression);
     void visit(PrimitiveTypeExpression primitiveTypeExpression);

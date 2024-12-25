@@ -8,4 +8,15 @@ public class ArrayType extends Type {
     ) {
         this.baseType = baseType;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return other instanceof ArrayType
+                && ((ArrayType) other).baseType.equals(this.baseType);
+    }
+
+    @Override
+    public String toString() {
+        return "Arr(" + baseType.toString() + ")";
+    }
 }

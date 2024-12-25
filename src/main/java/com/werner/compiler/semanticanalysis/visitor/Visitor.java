@@ -5,12 +5,17 @@ import com.werner.compiler.ast.declaration.FunctionDeclaration;
 import com.werner.compiler.ast.declaration.ProcedureDeclaration;
 import com.werner.compiler.ast.declaration.TypeDeclaration;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
+import com.werner.compiler.ast.expressions.BinaryExpression;
+import com.werner.compiler.ast.expressions.type.ArrayTypeExpression;
+import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
+import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
+import com.werner.compiler.ast.expressions.type.RecordTypeExpression;
 import com.werner.compiler.ast.statements.*;
 
 public interface Visitor {
     void visit(Program program);
     void visit(FunctionDeclaration functionDeclaration);
-    void visit(ProcedureDeclaration functionDeclaration);
+    void visit(ProcedureDeclaration procedureDeclaration);
     void visit(TypeDeclaration typeDeclaration);
     void visit(VariableDeclaration variableDeclaration);
 
@@ -21,4 +26,11 @@ public interface Visitor {
     void visit(ReturnStatement returnStatement);
     void visit(VariableDeclarationStatement variableDeclarationStatement);
     void visit(WhileStatement whileStatement);
+
+    void visit(ArrayTypeExpression arrayTypeExpression);
+    void visit(PrimitiveTypeExpression primitiveTypeExpression);
+    void visit(RecordTypeExpression recordTypeExpression);
+    void visit(NamedTypeExpression namedTypeExpression);
+
+    void visit(BinaryExpression binaryExpression);
 }

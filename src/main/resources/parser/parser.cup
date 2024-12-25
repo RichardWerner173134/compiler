@@ -230,6 +230,17 @@ nonterminal         AbstractObjectInitialization    object_initialization;
                                 type_expression,
                                 statement_list
                             ); :}
+                        |   FUNCTION:function IDENT:identifier LPAREN:lparen variable_declaration_list:variable_declaration_list RPAREN DOUBLECOLON IDENT:identifierReturn LCURLYBRACE statement_list:statement_list RCURLYBRACE
+                        {: RESULT = new FunctionDeclaration(
+                                new ComplexSymbolFactory.Location(functionleft, functionright),
+                                new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier),
+                                variable_declaration_list,
+                                new NamedTypeExpression(
+                                    new ComplexSymbolFactory.Location(identifierReturnleft, identifierReturnright),
+                                    new Identifier(new ComplexSymbolFactory.Location(identifierReturnleft, identifierReturnright), identifierReturn)
+                                ),
+                                statement_list
+                            ); :}
                         ;
 
     procedure_declaration::= FUNCTION:function IDENT:identifier LPAREN:lparen variable_declaration_list:variable_declaration_list RPAREN DOUBLECOLON VOID:_VOID LCURLYBRACE statement_list:statement_list RCURLYBRACE
@@ -380,7 +391,7 @@ nonterminal         AbstractObjectInitialization    object_initialization;
                         {: RESULT = object_initialization; :}
                         ;
 
-    object_initialization ::=    ARRAY:array LSQUAREBRACKET:lsquarebracket expr:expression RSQUAREBRACKET:rsquarebracket OF type_expression:type_expression RSQUAREBRACKET
+    object_initialization ::=   ARRAY:array LSQUAREBRACKET:lsquarebracket expr:expression RSQUAREBRACKET:rsquarebracket OF type_expression:type_expression
                             {: RESULT = new ArrayExpression(new ComplexSymbolFactory.Location(arrayleft, arrayright), expression, type_expression); :}
                             |   ARRAY:array LSQUAREBRACKET:lsquarebracket expr:expression RSQUAREBRACKET:rsquarebracket OF IDENT:identifier
                             {: RESULT = new ArrayExpression(

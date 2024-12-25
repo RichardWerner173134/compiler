@@ -1,35 +1,6 @@
-function x (blubb: int): array of int {
+type type123 = int;
 
-    var x : int;
-    return 42;
+function y (xxx: string): void {
+
+    xxx = xxx + 5;
 }
-
-function asd(arg1: string, arg2: int): void {
-    var procedureVar: int;
-}
-
-type a = int;
-
-type b = record {
-    age: a
-};
-
-if (a > 42) {
-    var i1: int;
-    var i2: int;
-    var i3: int;
-} else {
-    if (true){
-        var i1: int;
-        var i2: int;
-        var i3: int;
-    }
-    var i1: string;
-    while (x < 42) {
-        var i1: int;
-        var i2: int;
-        var i3: int;
-    }
-}
-
-

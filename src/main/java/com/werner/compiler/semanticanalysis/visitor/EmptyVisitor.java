@@ -5,6 +5,11 @@ import com.werner.compiler.ast.declaration.FunctionDeclaration;
 import com.werner.compiler.ast.declaration.ProcedureDeclaration;
 import com.werner.compiler.ast.declaration.TypeDeclaration;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
+import com.werner.compiler.ast.expressions.BinaryExpression;
+import com.werner.compiler.ast.expressions.type.ArrayTypeExpression;
+import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
+import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
+import com.werner.compiler.ast.expressions.type.RecordTypeExpression;
 import com.werner.compiler.ast.statements.*;
 
 public class EmptyVisitor implements Visitor {
@@ -20,7 +25,7 @@ public class EmptyVisitor implements Visitor {
     }
 
     @Override
-    public void visit(ProcedureDeclaration functionDeclaration) {
+    public void visit(ProcedureDeclaration procedureDeclaration) {
 
     }
 
@@ -66,6 +71,31 @@ public class EmptyVisitor implements Visitor {
 
     @Override
     public void visit(WhileStatement whileStatement) {
+
+    }
+
+    @Override
+    public void visit(ArrayTypeExpression arrayTypeExpression) {
+
+    }
+
+    @Override
+    public void visit(PrimitiveTypeExpression primitiveTypeExpression) {
+
+    }
+
+    @Override
+    public void visit(RecordTypeExpression recordTypeExpression) {
+
+    }
+
+    @Override
+    public void visit(NamedTypeExpression namedTypeExpression) {
+
+    }
+
+    @Override
+    public void visit(BinaryExpression binaryExpression) {
 
     }
 }

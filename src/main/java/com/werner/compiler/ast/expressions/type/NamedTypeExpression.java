@@ -19,7 +19,7 @@ public class NamedTypeExpression extends AbstractTypeExpression {
 
     @Override
     public void accept(Visitor visitor) {
-
+        visitor.visit(this);
     }
 
     @Override

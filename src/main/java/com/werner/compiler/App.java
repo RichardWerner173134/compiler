@@ -4,11 +4,13 @@ import com.werner.compiler.ast.Program;
 import com.werner.compiler.generated.Lexer;
 import com.werner.compiler.generated.Parser;
 import com.werner.compiler.semanticanalysis.visitor.NameAnalysisVisitor;
+import com.werner.compiler.semanticanalysis.visitor.TypeAnalysisVisitor;
 import com.werner.compiler.semanticanalysis.visitor.Visitor;
 import java_cup.runtime.Symbol;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Hello world!
@@ -28,7 +30,7 @@ public class App
             String treeVisualization = program.print(0);
             System.out.println(treeVisualization);
 
-            Visitor outerNameAnalysisVisitor = new NameAnalysisVisitor();
+            NameAnalysisVisitor outerNameAnalysisVisitor = new NameAnalysisVisitor();
             outerNameAnalysisVisitor.visit(program);
 
             int x = 0;

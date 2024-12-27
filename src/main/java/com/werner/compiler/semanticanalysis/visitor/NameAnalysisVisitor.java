@@ -40,6 +40,9 @@ public class NameAnalysisVisitor extends EmptyVisitor {
         for (Statement statement : program.statementList) {
             statement.accept(this);
         }
+
+        TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
+        program.accept(typeAnalysisVisitor);
     }
 
     @Override
@@ -245,8 +248,6 @@ public class NameAnalysisVisitor extends EmptyVisitor {
         TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
         functionCall.accept(typeAnalysisVisitor);
     }
-
-
 
     private Type getType(AbstractTypeExpression expression) {
         if (expression instanceof PrimitiveTypeExpression) {

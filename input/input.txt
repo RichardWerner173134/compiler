@@ -1,5 +1,3 @@
-var test: int;
-
 type type123 = int;
 
 function throw1 (xxx: int, yyy: string): void {
@@ -28,29 +26,6 @@ function x3 (xxx: int, yyy: string): int {
     }
 }
 
-function throw1 (xxx: int, yyy: string): int {
-
+function main(): void {
+    return;
 }
-
-function throw2 (xxx: int, yyy: string): int {
-    if (xxx < 10) {
-        return 123;
-    }
-}
-
-function throw3 (xxx: int, yyy: string): int {
-    if (xxx < 10) {
-        return 123;
-    } else {
-
-    }
-}
-
-function throw4 (xxx: int, yyy: string): int {
-    if (xxx > 10) {
-        var useless: int;
-    } else {
-        return 321;
-    }
-}
-

@@ -1,5 +1,6 @@
 package com.werner.compiler.semanticanalysis.visitor;
 
+import com.werner.compiler.ast.Program;
 import com.werner.compiler.ast.declaration.FunctionDeclaration;
 import com.werner.compiler.ast.declaration.ProcedureDeclaration;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
@@ -32,10 +33,32 @@ import java.util.Optional;
 public class TypeAnalysisVisitor extends EmptyVisitor {
     private final SymbolTable symbolTable;
 
+    private final static String MAIN_PROCEDURE_NAME = "main";
+
     public TypeAnalysisVisitor(
             SymbolTable symbolTable
     ) {
         this.symbolTable = new SymbolTable(symbolTable);
+    }
+
+    @Override
+    public void visit(Program program) {
+        Symbol symbol = new Symbol(MAIN_PROCEDURE_NAME);
+        Info info = symbolTable.lookup(symbol);
+
+        if (info == null) {
+            throw CompilerError.MainProcedureMissing();
+        }
+
+        if (info.getKind() != Kind.PROCEDURE) {
+            throw CompilerError.MainProcedureArgumentCountNotZero(info.getKind().name());
+        }
+
+        int mainProcedureCount = ((ProcedureInfo) info).parameters.size();
+
+        if (mainProcedureCount != 0) {
+            throw CompilerError.MainProcedureArgumentCountNotZero(mainProcedureCount);
+        }
     }
 
     @Override

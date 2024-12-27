@@ -124,4 +124,16 @@ public class CompilerError extends RuntimeException {
         return new CompilerError(statement + " is not allowed in this location. Error at line="
                 + plusOne(location) + ", column=" + location.getColumn());
     }
+
+    public static CompilerError MainProcedureMissing() {
+        return new CompilerError("Main procedure is missing");
+    }
+
+    public static CompilerError MainProcedureArgumentCountNotZero(String kind) {
+        return new CompilerError("Identifier main must be a procedure. Found a " + kind + ".");
+    }
+
+    public static CompilerError MainProcedureArgumentCountNotZero(int numberOfArguments) {
+        return new CompilerError("Main procedure must have 0 arguments. Found " + numberOfArguments + " arguments.");
+    }
 }

@@ -1,9 +1,56 @@
 type type123 = int;
-y(42);
-function y (xxx: int): void {
-    var s : string;
-    y(s);
+
+
+function x1 (xxx: int, yyy: string): int {
+    return 123;
 }
 
 
+function x2 (xxx: int, yyy: string): int {
+    if (xxx > 10) {
+        return 123;
+    }
+
+    return 321;
+}
+
+
+function x3 (xxx: int, yyy: string): int {
+    if (xxx > 10) {
+        return 123;
+    } else {
+        return 321;
+    }
+}
+
+function throw1 (xxx: int, yyy: string): int {
+    var ss : int;
+    var ss : int;
+
+    return 1;
+}
+
+function throw2 (xxx: int, yyy: string): int {
+    if (xxx < 10) {
+        return 123;
+    }
+
+    return 1;
+}
+
+function throw3 (xxx: int, yyy: string): int {
+    if (xxx < 10) {
+        return 123;
+    } else {
+        return 1;
+    }
+}
+
+function throw4 (xxx: int, yyy: string): int {
+    if (xxx > 10) {
+        var useless: int;
+    } else {
+        return 321;
+    }
+}
 

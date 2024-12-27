@@ -185,13 +185,19 @@ public class NameAnalysisVisitor extends EmptyVisitor {
     }
 
     @Override
+    public void visit(ReturnStatement returnStatement) {
+        TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
+        returnStatement.accept(typeAnalysisVisitor);
+    }
+
+    @Override
     public void visit(VariableDeclaration variableDeclaration) {
         Type type = getType(variableDeclaration.typeExpression);
 
         symbolTable.enter(
                 new Symbol(variableDeclaration.identifier.name),
                 new VariableInfo(false, type), // TODO implement refs
-                CompilerError.RedeclarationOfType(variableDeclaration.location, variableDeclaration.identifier.name)
+                CompilerError.RedeclarationOfVariable(variableDeclaration.location, variableDeclaration.identifier.name)
         );
 
         // typecheck

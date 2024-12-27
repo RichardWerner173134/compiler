@@ -12,11 +12,7 @@ import com.werner.compiler.ast.expressions.type.AbstractTypeExpression;
 import com.werner.compiler.ast.expressions.type.ArrayTypeExpression;
 import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
 import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
-import com.werner.compiler.ast.statements.AssignStatement;
-import com.werner.compiler.ast.statements.IfStatement;
-import com.werner.compiler.ast.statements.ProcedureCall;
-import com.werner.compiler.ast.statements.ReturnStatement;
-import com.werner.compiler.ast.statements.WhileStatement;
+import com.werner.compiler.ast.statements.*;
 import com.werner.compiler.exceptions.CompilerError;
 import com.werner.compiler.semanticanalysis.Kind;
 import com.werner.compiler.semanticanalysis.Symbol;
@@ -31,6 +27,7 @@ import com.werner.compiler.semanticanalysis.type.PrimitiveType;
 import com.werner.compiler.semanticanalysis.type.Type;
 
 import java.util.List;
+import java.util.Optional;
 
 public class TypeAnalysisVisitor extends EmptyVisitor {
     private final SymbolTable symbolTable;
@@ -62,6 +59,11 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
         if (!declaredType.equals(assignmentType)) {
             throw CompilerError.TypeError(assignStatement.location, declaredType.toString(), assignmentType.toString());
         }
+    }
+
+    @Override
+    public void visit(ReturnStatement returnStatement) {
+        returnStatement.expression.accept(this);
     }
 
     @Override
@@ -110,7 +112,7 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
             Type argumentType = getType(argument);
 
             if (!argumentType.equals(parameter.type)) {
-                throw CompilerError.TypeErrorFunctionCall(functionCall.location, parameter.type.toString(), argumentType.toString());
+                throw CompilerError.TypeErrorFunctionCall(functionCall.location, parameter.type.toString(), argumentType.toString(), i);
             }
         }
     }
@@ -141,7 +143,7 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
             Type argumentType = getType(argument);
 
             if (!argumentType.equals(parameter.type)) {
-                throw CompilerError.TypeErrorProcedureCall(procedureCall.location, parameter.type.toString(), argumentType.toString());
+                throw CompilerError.TypeErrorProcedureCall(procedureCall.location, parameter.type.toString(), argumentType.toString(), i);
             }
         }
     }
@@ -206,6 +208,7 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
         // return type
         Type functionReturnType = getType(functionDeclaration.returnType);
 
+        // return statements match return type
         functionDeclaration.statementList.stream()
                 .filter(s -> s instanceof ReturnStatement)
                 .forEach(s -> {
@@ -215,6 +218,15 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
                         throw CompilerError.TypeError(s.location, functionReturnType.toString(), returnStatementType.toString());
                     }
                 });
+
+        // every path has a return statement
+        boolean returnsOnAllPaths = functionDeclaration.statementList
+                .stream()
+                .anyMatch(this::containsReturnStatementForAllPaths);
+
+        if (!returnsOnAllPaths) {
+            throw CompilerError.MissingReturnStatement(functionDeclaration.location, functionDeclaration.identifier.name);
+        }
     }
 
     @Override
@@ -225,8 +237,6 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
                     throw CompilerError.NoReturnAllowed(s.location);
                 });
     }
-
-
 
     private Type getType(Expression expression) {
         if (expression instanceof IntLiteral) {
@@ -304,6 +314,48 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
             return ((VariableInfo)info).type;
         }
 
+        if (expression instanceof FunctionCall) {
+            Symbol symbol = new Symbol(((FunctionCall) expression).identifier.name);
+            Info info = symbolTable.lookup(symbol);
+
+            if (info == null) {
+                throw CompilerError.UnknownIdentifier(expression.location, symbol.identifier);
+            }
+
+            if (info.getKind() != Kind.FUNCTION) {
+                throw CompilerError.NotAFunction(expression.location, ((FunctionCall) expression).identifier.name);
+            }
+
+            return ((FunctionInfo)info).type;
+        }
+
         throw new UnsupportedOperationException("Expression has unknown Type. Please check implementation. Error at line=" + expression.location);
+    }
+
+    private boolean containsReturnStatementForAllPaths(Statement statement) {
+        if (statement instanceof ReturnStatement) {
+            return true;
+        }
+
+        if (statement instanceof IfStatement) {
+            Optional<List<Statement>> elseStatements = ((IfStatement) statement).elseStatements;
+            if (elseStatements.isEmpty()) {
+                return false;
+            }
+
+            boolean ifContainsAtLeastOneReturn = ((IfStatement) statement).ifStatements
+                    .stream()
+                    .anyMatch(this::containsReturnStatementForAllPaths);
+
+
+            boolean elseContainsAtLeastOneReturn = elseStatements
+                    .get()
+                    .stream()
+                    .anyMatch(this::containsReturnStatementForAllPaths);
+
+            return ifContainsAtLeastOneReturn && elseContainsAtLeastOneReturn;
+        }
+
+        return false;
     }
 }

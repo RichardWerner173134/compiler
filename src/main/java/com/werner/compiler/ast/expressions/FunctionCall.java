@@ -41,6 +41,6 @@ public class FunctionCall extends Expression {
 
     @Override
     public void accept(Visitor visitor) {
-
+        visitor.visit(this);
     }
 }

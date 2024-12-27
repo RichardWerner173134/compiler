@@ -88,8 +88,12 @@ public class CompilerError extends RuntimeException {
                 + ". Error at line=" + plusOne(location) + ", column=" + location.getColumn());
     }
 
-    public static CompilerError NoReturnAllowed(ComplexSymbolFactory.Location location) {
-        return new CompilerError("Return statement is here not allowed. Error at line=" + plusOne(location) + ", column=" + location.getColumn());
+    public static CompilerError NoTypedReturnAllowed(ComplexSymbolFactory.Location location) {
+        return new CompilerError("Typed return statement is not allowed in a procedure. Error at line=" + plusOne(location) + ", column=" + location.getColumn());
+    }
+
+    public static CompilerError NoEmptyReturnAllowed(ComplexSymbolFactory.Location location) {
+        return new CompilerError("Empty return statement is not allowed in a function. Error at line=" + plusOne(location) + ", column=" + location.getColumn());
     }
 
     public static CompilerError NotAFunction(ComplexSymbolFactory.Location location, String identifier) {
@@ -113,6 +117,11 @@ public class CompilerError extends RuntimeException {
 
     public static CompilerError MissingReturnStatement(ComplexSymbolFactory.Location location, String identifier) {
         return new CompilerError("Missing return statement for function " + identifier + ". Error at line="
+                + plusOne(location) + ", column=" + location.getColumn());
+    }
+
+    public static CompilerError InvalidStatementLocation(ComplexSymbolFactory.Location location, String statement) {
+        return new CompilerError(statement + " is not allowed in this location. Error at line="
                 + plusOne(location) + ", column=" + location.getColumn());
     }
 }

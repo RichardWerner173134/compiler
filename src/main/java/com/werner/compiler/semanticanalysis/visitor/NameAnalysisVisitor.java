@@ -85,7 +85,7 @@ public class NameAnalysisVisitor extends EmptyVisitor {
 
     @Override
     public void visit(ProcedureDeclaration procedureDeclaration) {
-        // allow functions only in global scope
+        // allow procedures only in global scope
         if (symbolTable.outerScope.isPresent()) {
             throw CompilerError.InvalidDeclarationLocation(procedureDeclaration.location, procedureDeclaration.identifier.name);
         }
@@ -141,6 +141,14 @@ public class NameAnalysisVisitor extends EmptyVisitor {
     }
 
     @Override
+    public void visit(EmptyReturnStatement emptyReturnStatement) {
+        // allow empty return statements only in local scops
+        if (symbolTable.outerScope.isEmpty()) {
+            throw CompilerError.InvalidStatementLocation(emptyReturnStatement.location, emptyReturnStatement.getClass().getSimpleName());
+        }
+    }
+
+    @Override
     public void visit(VariableDeclarationStatement variableDeclarationStatement) {
         // allow type declarations only in local scope
         if (symbolTable.outerScope.isEmpty()) {
@@ -152,6 +160,11 @@ public class NameAnalysisVisitor extends EmptyVisitor {
 
     @Override
     public void visit(IfStatement ifStatement) {
+        // allow if statements only in local scops
+        if (symbolTable.outerScope.isEmpty()) {
+            throw CompilerError.InvalidStatementLocation(ifStatement.location, ifStatement.getClass().getSimpleName());
+        }
+
         TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
         ifStatement.accept(typeAnalysisVisitor);
 
@@ -169,6 +182,11 @@ public class NameAnalysisVisitor extends EmptyVisitor {
 
     @Override
     public void visit(WhileStatement whileStatement) {
+        // allow while statements only in local scops
+        if (symbolTable.outerScope.isEmpty()) {
+            throw CompilerError.InvalidStatementLocation(whileStatement.location, whileStatement.getClass().getSimpleName());
+        }
+
         TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
         whileStatement.accept(typeAnalysisVisitor);
 
@@ -180,14 +198,24 @@ public class NameAnalysisVisitor extends EmptyVisitor {
 
     @Override
     public void visit(AssignStatement assignStatement) {
+        // allow while statements only in local scops
+        if (symbolTable.outerScope.isEmpty()) {
+            throw CompilerError.InvalidStatementLocation(assignStatement.location, assignStatement.getClass().getSimpleName());
+        }
+
         TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
         assignStatement.accept(typeAnalysisVisitor);
     }
 
     @Override
-    public void visit(ReturnStatement returnStatement) {
+    public void visit(TypedReturnStatement typedReturnStatement) {
+        // allow typed return statements only in local scops
+        if (symbolTable.outerScope.isEmpty()) {
+            throw CompilerError.InvalidStatementLocation(typedReturnStatement.location, typedReturnStatement.getClass().getSimpleName());
+        }
+
         TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
-        returnStatement.accept(typeAnalysisVisitor);
+        typedReturnStatement.accept(typeAnalysisVisitor);
     }
 
     @Override
@@ -217,6 +245,8 @@ public class NameAnalysisVisitor extends EmptyVisitor {
         TypeAnalysisVisitor typeAnalysisVisitor = new TypeAnalysisVisitor(symbolTable);
         functionCall.accept(typeAnalysisVisitor);
     }
+
+
 
     private Type getType(AbstractTypeExpression expression) {
         if (expression instanceof PrimitiveTypeExpression) {

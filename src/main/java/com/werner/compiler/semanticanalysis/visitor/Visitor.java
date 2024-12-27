@@ -23,7 +23,8 @@ public interface Visitor {
     void visit(AssignStatement assignStatement);
     void visit(EmptyStatement emptyStatement);
     void visit(IfStatement ifStatement);
-    void visit(ReturnStatement returnStatement);
+    void visit(TypedReturnStatement typedReturnStatement);
+    void visit(EmptyReturnStatement emptyReturnStatement);
     void visit(VariableDeclarationStatement variableDeclarationStatement);
     void visit(WhileStatement whileStatement);
 

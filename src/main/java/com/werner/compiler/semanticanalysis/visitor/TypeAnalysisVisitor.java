@@ -62,8 +62,8 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
     }
 
     @Override
-    public void visit(ReturnStatement returnStatement) {
-        returnStatement.expression.accept(this);
+    public void visit(TypedReturnStatement typedReturnStatement) {
+        typedReturnStatement.expression.accept(this);
     }
 
     @Override
@@ -208,11 +208,18 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
         // return type
         Type functionReturnType = getType(functionDeclaration.returnType);
 
+        functionDeclaration.statementList
+                .stream()
+                .filter(s -> s instanceof EmptyReturnStatement)
+                .forEach(s -> {
+                    throw CompilerError.NoEmptyReturnAllowed(s.location);
+                });
+
         // return statements match return type
         functionDeclaration.statementList.stream()
-                .filter(s -> s instanceof ReturnStatement)
+                .filter(s -> s instanceof TypedReturnStatement)
                 .forEach(s -> {
-                    Type returnStatementType = getType(((ReturnStatement) s).expression);
+                    Type returnStatementType = getType(((TypedReturnStatement) s).expression);
 
                     if (!returnStatementType.equals(functionReturnType)) {
                         throw CompilerError.TypeError(s.location, functionReturnType.toString(), returnStatementType.toString());
@@ -232,9 +239,9 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
     @Override
     public void visit(ProcedureDeclaration procedureDeclaration) {
         procedureDeclaration.statementList.stream()
-                .filter(s -> s instanceof ReturnStatement)
+                .filter(s -> s instanceof TypedReturnStatement)
                 .forEach(s -> {
-                    throw CompilerError.NoReturnAllowed(s.location);
+                    throw CompilerError.NoTypedReturnAllowed(s.location);
                 });
     }
 
@@ -333,7 +340,7 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
     }
 
     private boolean containsReturnStatementForAllPaths(Statement statement) {
-        if (statement instanceof ReturnStatement) {
+        if (statement instanceof TypedReturnStatement) {
             return true;
         }
 

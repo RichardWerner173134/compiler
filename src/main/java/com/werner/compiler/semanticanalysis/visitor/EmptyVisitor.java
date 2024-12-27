@@ -56,7 +56,12 @@ public class EmptyVisitor implements Visitor {
     }
 
     @Override
-    public void visit(ReturnStatement returnStatement) {
+    public void visit(TypedReturnStatement typedReturnStatement) {
+
+    }
+
+    @Override
+    public void visit(EmptyReturnStatement emptyReturnStatement) {
 
     }
 

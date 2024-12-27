@@ -8,6 +8,7 @@ import com.werner.compiler.ast.statements.AssignStatement;
 import com.werner.compiler.ast.statements.EmptyStatement;
 import com.werner.compiler.ast.statements.Statement;
 import com.werner.compiler.ast.statements.WhileStatement;
+import com.werner.compiler.ast.statements.EmptyReturnStatement;
 import com.werner.compiler.ast.statements.ProcedureCall;
 import com.werner.compiler.ast.expressions.Expression;
 import com.werner.compiler.ast.expressions.BinaryExpression;
@@ -27,7 +28,7 @@ import com.werner.compiler.ast.expressions.type.RecordTypeExpression;
 import com.werner.compiler.ast.declaration.TypeDeclaration;
 import com.werner.compiler.ast.declaration.FunctionDeclaration;
 import com.werner.compiler.ast.statements.VariableDeclarationStatement;
-import com.werner.compiler.ast.statements.ReturnStatement;
+import com.werner.compiler.ast.statements.TypedReturnStatement;
 import com.werner.compiler.ast.expressions.FunctionCall;
 import com.werner.compiler.ast.expressions.literals.StringLiteral;
 import com.werner.compiler.ast.expressions.initializer.ArrayExpression;
@@ -119,7 +120,8 @@ nonterminal         Statement                       statement;
 nonterminal         AssignStatement                 assign_statement;
 nonterminal         EmptyStatement                  empty_statement;
 nonterminal         VariableDeclarationStatement    variable_declaration_statement;
-nonterminal         ReturnStatement                 return_statement;
+nonterminal         TypedReturnStatement            typed_return_statement;
+nonterminal         EmptyReturnStatement            empty_return_statement;
 nonterminal         FunctionCall                    function_call;
 nonterminal         ProcedureCall                   procedure_call;
 
@@ -178,8 +180,10 @@ nonterminal         AbstractObjectInitialization    object_initialization;
                         {: RESULT = procedure_declaration; :}
 
                         /* others */
-                        |   return_statement:return_statement
-                        {: RESULT = return_statement; :}
+                        |   typed_return_statement:typed_return_statement
+                        {: RESULT = typed_return_statement; :}
+                        |   empty_return_statement:empty_return_statement
+                        {: RESULT = empty_return_statement; :}
                         ;
 
  /* ----------------------------Statements Section-------------------- */
@@ -252,8 +256,14 @@ nonterminal         AbstractObjectInitialization    object_initialization;
                             ); :}
                         ;
 
-    return_statement    ::= RETURN:return_keyword expr:expression SEMICOLON
-                        {: RESULT = new ReturnStatement(
+    empty_return_statement    ::= RETURN:return_keyword SEMICOLON
+                        {:
+                            RESULT = new EmptyReturnStatement (new ComplexSymbolFactory.Location(return_keywordleft, return_keywordright));
+                        :}
+                        ;
+
+    typed_return_statement    ::= RETURN:return_keyword expr:expression SEMICOLON
+                        {: RESULT = new TypedReturnStatement(
                                 new ComplexSymbolFactory.Location(return_keywordleft, return_keywordright),
                                 expression
                             );

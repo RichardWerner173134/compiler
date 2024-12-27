@@ -4,11 +4,11 @@ import com.werner.compiler.ast.expressions.Expression;
 import com.werner.compiler.semanticanalysis.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
-public class ReturnStatement extends Statement {
+public class TypedReturnStatement extends Statement {
 
     public final Expression expression;
 
-    public ReturnStatement(
+    public TypedReturnStatement(
             ComplexSymbolFactory.Location location,
             Expression expression
     ) {

@@ -1,31 +1,10 @@
-type type123 = int;
-
-function throw1 (xxx: int, yyy: string): void {
-    return;
-}
-
-function x1 (xxx: int, yyy: string): int {
-    return 123;
-}
-
-
-function x2 (xxx: int, yyy: string): int {
-    if (xxx > 10) {
-        return 123;
-    }
-
-    return 321;
-}
-
-
-function x3 (xxx: int, yyy: string): int {
-    if (xxx > 10) {
-        return 123;
-    } else {
-        return 321;
-    }
-}
-
 function main(): void {
+    var x : int;
+
+
+    x = 1 + (2-3) * 4 + 5;
     return;
 }
+
+
+

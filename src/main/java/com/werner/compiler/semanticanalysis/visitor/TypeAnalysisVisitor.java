@@ -15,6 +15,7 @@ import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
 import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
 import com.werner.compiler.ast.statements.*;
 import com.werner.compiler.exceptions.CompilerError;
+import com.werner.compiler.semanticanalysis.Constants;
 import com.werner.compiler.semanticanalysis.Kind;
 import com.werner.compiler.semanticanalysis.Symbol;
 import com.werner.compiler.semanticanalysis.SymbolTable;
@@ -33,8 +34,6 @@ import java.util.Optional;
 public class TypeAnalysisVisitor extends EmptyVisitor {
     private final SymbolTable symbolTable;
 
-    private final static String MAIN_PROCEDURE_NAME = "main";
-
     public TypeAnalysisVisitor(
             SymbolTable symbolTable
     ) {
@@ -43,7 +42,7 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
 
     @Override
     public void visit(Program program) {
-        Symbol symbol = new Symbol(MAIN_PROCEDURE_NAME);
+        Symbol symbol = new Symbol(Constants.MAIN_PROCEDURE_NAME);
         Info info = symbolTable.lookup(symbol);
 
         if (info == null) {

@@ -47,6 +47,6 @@ public class ArrayExpression extends AbstractObjectInitialization {
 
     @Override
     public void accept(Visitor visitor) {
-
+        visitor.visit(this);
     }
 }

@@ -129,11 +129,15 @@ public class CompilerError extends RuntimeException {
         return new CompilerError("Main procedure is missing");
     }
 
-    public static CompilerError MainProcedureArgumentCountNotZero(String kind) {
+    public static CompilerError MainProcedureNotAProcedure(String kind) {
         return new CompilerError("Identifier main must be a procedure. Found a " + kind + ".");
     }
 
-    public static CompilerError MainProcedureArgumentCountNotZero(int numberOfArguments) {
-        return new CompilerError("Main procedure must have 0 arguments. Found " + numberOfArguments + " arguments.");
+    public static CompilerError MainProcedureMustHave1Argument(int numberOfArguments) {
+        return new CompilerError("Main procedure must have 1 argument. Found " + numberOfArguments + " arguments.");
+    }
+
+    public static CompilerError MainProcedureNoStringArgsFound(String type) {
+        return new CompilerError("Main procedure must have Array(STRING) argument. Found type " + type + " instead.");
     }
 }

@@ -15,9 +15,7 @@ import com.werner.compiler.semanticanalysis.info.*;
 import com.werner.compiler.semanticanalysis.SymbolTable;
 import com.werner.compiler.semanticanalysis.type.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class NameAnalysisVisitor extends EmptyVisitor {
     public final SymbolTable symbolTable;
@@ -69,7 +67,15 @@ public class NameAnalysisVisitor extends EmptyVisitor {
                 CompilerError.RedeclarationOfType(functionDeclaration.location, functionDeclaration.identifier.name)
         );
 
+        // link symbol tables inner scope
         NameAnalysisVisitor innerVisitor = new NameAnalysisVisitor(symbolTable);
+
+        Symbol symbol = new Symbol(String.valueOf(functionDeclaration.hashCode()));
+
+        HashMap<Symbol, SymbolTable> innerScopes = symbolTable.innerScopes.orElseGet(HashMap::new);
+        innerScopes.put(symbol, innerVisitor.symbolTable);
+
+        symbolTable.innerScopes = Optional.of(innerScopes);
 
         // function parameters
         for (VariableDeclaration variableDeclaration : functionDeclaration.parametersList) {
@@ -110,6 +116,13 @@ public class NameAnalysisVisitor extends EmptyVisitor {
         );
 
         NameAnalysisVisitor innerVisitor = new NameAnalysisVisitor(symbolTable);
+
+        Symbol symbol = new Symbol(String.valueOf(procedureDeclaration.hashCode()));
+
+        HashMap<Symbol, SymbolTable> innerScopes = symbolTable.innerScopes.orElseGet(HashMap::new);
+        innerScopes.put(symbol, innerVisitor.symbolTable);
+
+        symbolTable.innerScopes = Optional.of(innerScopes);
 
         // procedure parameters
         for (VariableDeclaration variableDeclaration : procedureDeclaration.parametersList) {
@@ -173,11 +186,22 @@ public class NameAnalysisVisitor extends EmptyVisitor {
 
         NameAnalysisVisitor innerVisitorIf = new NameAnalysisVisitor(symbolTable);
 
+        Symbol symbolIf = new Symbol(String.valueOf(ifStatement.ifStatements.hashCode()));
+
+        HashMap<Symbol, SymbolTable> innerScopes = symbolTable.innerScopes.orElseGet(HashMap::new);
+        innerScopes.put(symbolIf, innerVisitorIf.symbolTable);
+        symbolTable.innerScopes = Optional.of(innerScopes);
+
         for (Statement statement : ifStatement.ifStatements) {
             statement.accept(innerVisitorIf);
         }
 
         NameAnalysisVisitor innerVisitorElse = new NameAnalysisVisitor(symbolTable);
+
+        Symbol symbolElse = new Symbol(String.valueOf(ifStatement.elseStatements.hashCode()));
+        innerScopes.put(symbolElse, innerVisitorElse.symbolTable);
+        symbolTable.innerScopes = Optional.of(innerScopes);
+
         for (Statement statement : ifStatement.elseStatements.orElse(Collections.emptyList())) {
             statement.accept(innerVisitorElse);
         }
@@ -194,6 +218,13 @@ public class NameAnalysisVisitor extends EmptyVisitor {
         whileStatement.accept(typeAnalysisVisitor);
 
         NameAnalysisVisitor innerVisitor = new NameAnalysisVisitor(symbolTable);
+
+        Symbol symbolWhile = new Symbol(String.valueOf(whileStatement.statementList.hashCode()));
+
+        HashMap<Symbol, SymbolTable> innerScopes = symbolTable.innerScopes.orElseGet(HashMap::new);
+        innerScopes.put(symbolWhile, innerVisitor.symbolTable);
+        symbolTable.innerScopes = Optional.of(innerScopes);
+
         for (Statement statement : whileStatement.statementList) {
             statement.accept(innerVisitor);
         }

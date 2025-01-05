@@ -1,6 +1,7 @@
 package com.werner.compiler.codesynthesis;
 
 public class ThreeAddressCode {
+    private final static int PADDING_SIZE = 6;
     private String target;
     private Operator operator;
     private String left;
@@ -45,12 +46,12 @@ public class ThreeAddressCode {
     }
 
     private String threePadd(String value) {
-        if (value.length() > 3) {
+        if (value.length() > PADDING_SIZE) {
             throw new IllegalArgumentException("Padding impossible if value is too big");
         }
 
         StringBuilder sb = new StringBuilder(value);
-        while(sb.length() < 3) {
+        while(sb.length() < PADDING_SIZE) {
             sb.insert(0, " ");
         }
 

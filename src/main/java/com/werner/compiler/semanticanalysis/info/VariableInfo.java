@@ -7,9 +7,6 @@ public class VariableInfo extends Info {
 
     public final boolean isReferenceParameter;
     public final Type type;
-    public String address;
-
-    public int ALLOCATION_SIZE;
 
     public VariableInfo(
             boolean isReferenceParameter,

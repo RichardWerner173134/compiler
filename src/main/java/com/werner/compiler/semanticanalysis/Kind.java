@@ -4,5 +4,6 @@ public enum Kind {
     FUNCTION,
     PROCEDURE,
     TYPE,
-    VARIABLE
+    VARIABLE,
+    ;
 }

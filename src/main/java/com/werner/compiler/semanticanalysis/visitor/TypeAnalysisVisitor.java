@@ -50,13 +50,21 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
         }
 
         if (info.getKind() != Kind.PROCEDURE) {
-            throw CompilerError.MainProcedureArgumentCountNotZero(info.getKind().name());
+            throw CompilerError.MainProcedureNotAProcedure(info.getKind().name());
         }
 
         int mainProcedureCount = ((ProcedureInfo) info).parameters.size();
 
-        if (mainProcedureCount != 0) {
-            throw CompilerError.MainProcedureArgumentCountNotZero(mainProcedureCount);
+        if (mainProcedureCount != 1) {
+            throw CompilerError.MainProcedureMustHave1Argument(mainProcedureCount);
+        }
+
+        VariableInfo variableInfo = ((ProcedureInfo) info).parameters.get(0);
+        if ((variableInfo.type instanceof ArrayType
+                &&
+                ((ArrayType)variableInfo.type).baseType.equals(PrimitiveType.STRING_TYPE)) == false) {
+
+            throw CompilerError.MainProcedureNoStringArgsFound(variableInfo.type.toString());
         }
     }
 
@@ -204,8 +212,10 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
         Type rightOperandType = getType(binaryExpression.rightOperand);
 
         if (binaryExpression.operator.isArithmetic()) {
-            boolean isValidArithmeticExpression = leftOperandType.equals(PrimitiveType.INT_TYPE)
-                    && rightOperandType.equals(PrimitiveType.INT_TYPE);
+            boolean isValidArithmeticExpression =
+                    leftOperandType.equals(PrimitiveType.INT_TYPE)
+                    &&
+                    rightOperandType.equals(PrimitiveType.INT_TYPE);
 
             if (!isValidArithmeticExpression) {
                 throw CompilerError.TypeErrorArithmeticExpression(binaryExpression.location, leftOperandType.toString(), rightOperandType.toString());
@@ -215,12 +225,21 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
         else if (binaryExpression.operator.isComparison()) {
             boolean isEqualityComparison = List.of(Operator.EQ, Operator.NEQ).contains(binaryExpression.operator);
 
-            boolean isValidIntegerComparison = leftOperandType.equals(PrimitiveType.INT_TYPE) && rightOperandType.equals(PrimitiveType.INT_TYPE);
+            if (isEqualityComparison) { /* ==, != */
+                boolean isValidBoolComparison = leftOperandType.equals(PrimitiveType.BOOLEAN_TYPE) && rightOperandType.equals(PrimitiveType.BOOLEAN_TYPE);
+                boolean isValidIntegerComparison = leftOperandType.equals(PrimitiveType.INT_TYPE) && rightOperandType.equals(PrimitiveType.INT_TYPE);
 
-            if (isEqualityComparison && !leftOperandType.equals(rightOperandType)) {
-                throw CompilerError.TypeErrorEqualityComparisonExpression(binaryExpression.location, leftOperandType.toString(), rightOperandType.toString());
-            } else if (!isValidIntegerComparison) {
-                throw CompilerError.TypeErrorIntegerComparison(binaryExpression.location, leftOperandType.toString(), rightOperandType.toString());
+                // accept only boolean and integer equality comparisons
+                if (!isValidBoolComparison && !isValidIntegerComparison) {
+                    throw CompilerError.TypeErrorEqualityComparisonExpression(binaryExpression.location, leftOperandType.toString(), rightOperandType.toString());
+                }
+
+            } else { /* <, <=, >, >= */
+                boolean isValidIntegerComparison = leftOperandType.equals(PrimitiveType.INT_TYPE) && rightOperandType.equals(PrimitiveType.INT_TYPE);
+
+                if (!isValidIntegerComparison) {
+                    throw CompilerError.TypeErrorIntegerComparison(binaryExpression.location, leftOperandType.toString(), rightOperandType.toString());
+                }
             }
         }
     }
@@ -284,7 +303,7 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
             Expression indexSize = ((ArrayExpression) expression).indexSize;
             Type indexType = getType(indexSize);
 
-            if (indexType != PrimitiveType.INT_TYPE) {
+            if (indexType.equals(PrimitiveType.INT_TYPE) == false) {
                 throw CompilerError.ArrayInitializationError(expression.location);
             }
 

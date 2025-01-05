@@ -1,10 +1,9 @@
-function main(): void {
-    var x : int;
+function main(args: array of string): void {
 
+    var arr: array of array of int;
 
-    x = 1 + (2-3) * 4 + 5;
+    arr = new array [42] of array[24] of int;
+
     return;
 }
-
-
 

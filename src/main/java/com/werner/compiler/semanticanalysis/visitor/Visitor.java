@@ -7,6 +7,11 @@ import com.werner.compiler.ast.declaration.TypeDeclaration;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
 import com.werner.compiler.ast.expressions.BinaryExpression;
 import com.werner.compiler.ast.expressions.FunctionCall;
+import com.werner.compiler.ast.expressions.VariableExpression;
+import com.werner.compiler.ast.expressions.initializer.ArrayExpression;
+import com.werner.compiler.ast.expressions.literals.BooleanLiteral;
+import com.werner.compiler.ast.expressions.literals.IntLiteral;
+import com.werner.compiler.ast.expressions.literals.StringLiteral;
 import com.werner.compiler.ast.expressions.type.ArrayTypeExpression;
 import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
 import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
@@ -37,4 +42,10 @@ public interface Visitor {
     void visit(NamedTypeExpression namedTypeExpression);
 
     void visit(BinaryExpression binaryExpression);
+    void visit(VariableExpression variableExpression);
+
+    void visit(BooleanLiteral booleanLiteral);
+    void visit(StringLiteral stringLiteral);
+    void visit(IntLiteral intLiteral);
+    void visit(ArrayExpression arrayExpression);
 }

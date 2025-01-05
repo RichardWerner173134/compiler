@@ -2,15 +2,24 @@ package com.werner.compiler.codesynthesis;
 
 import com.werner.compiler.ast.expressions.BinaryExpression;
 import com.werner.compiler.ast.expressions.Expression;
+import com.werner.compiler.ast.expressions.FunctionCall;
+import com.werner.compiler.ast.expressions.VariableExpression;
+import com.werner.compiler.ast.expressions.literals.BooleanLiteral;
 import com.werner.compiler.ast.expressions.literals.IntLiteral;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ThreeAddressCodeTransformer {
-    private static final char TEMP_PREFIX = 't';
     private static final String ZERO = "0";
-    private int tempCounter = 0;
+
+    private NameProvider nameProvider;
+
+    public ThreeAddressCodeTransformer(
+            NameProvider nameProvider
+    ) {
+        this.nameProvider = nameProvider;
+    }
 
     public List<ThreeAddressCode> transform(Expression expression) {
         System.out.println("Transforming " + expression.getClass().getSimpleName());
@@ -29,19 +38,37 @@ public class ThreeAddressCodeTransformer {
             List<ThreeAddressCode> rightTacs = transform(astRight);
             result.addAll(rightTacs);
 
-            ThreeAddressCode tac = new ThreeAddressCode(getNextTempVariable(), tacOperator, leftTacs.getLast().getTarget(), rightTacs.getLast().getTarget());
+            String nextTempVariable = nameProvider.getNextTempVariable();
+            ThreeAddressCode tac = new ThreeAddressCode(nextTempVariable, tacOperator, leftTacs.getLast().getTarget(), rightTacs.getLast().getTarget());
             result.add(tac);
         }
 
         if (expression instanceof IntLiteral) {
-            ThreeAddressCode threeAddressCode = new ThreeAddressCode(getNextTempVariable(), Operator.ADD, ((IntLiteral) expression).value.toString(), ZERO);
+            String nextTempVariable = nameProvider.getNextTempVariable();
+            ThreeAddressCode threeAddressCode = new ThreeAddressCode(nextTempVariable, Operator.ADD, ((IntLiteral) expression).value.toString(), ZERO);
             result.add(threeAddressCode);
         }
 
-        return result;
-    }
+        if (expression instanceof BooleanLiteral) {
+            String nextTempVariable = nameProvider.getNextTempVariable();
+            ThreeAddressCode threeAddressCode = new ThreeAddressCode(nextTempVariable, Operator.ADD,
+                    ((BooleanLiteral) expression).value
+                            ? String.valueOf(1)     /*TRUE*/
+                            : String.valueOf(0),    /*FALSE*/
+                    ZERO);
+            result.add(threeAddressCode);
+        }
 
-    private String getNextTempVariable() {
-        return "" + TEMP_PREFIX + tempCounter++;
+        if (expression instanceof VariableExpression) {
+            String nextTempVariable = nameProvider.getNextTempVariable();
+            ThreeAddressCode threeAddressCode = new ThreeAddressCode(nextTempVariable, Operator.ADD, ((VariableExpression) expression).identifier.name, ZERO);
+            result.add(threeAddressCode);
+        }
+
+        if (expression instanceof FunctionCall) {
+            // TODO implement ActivationRecord
+        }
+
+        return result;
     }
 }

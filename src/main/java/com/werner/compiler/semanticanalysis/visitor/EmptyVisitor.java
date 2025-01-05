@@ -7,6 +7,11 @@ import com.werner.compiler.ast.declaration.TypeDeclaration;
 import com.werner.compiler.ast.declaration.VariableDeclaration;
 import com.werner.compiler.ast.expressions.BinaryExpression;
 import com.werner.compiler.ast.expressions.FunctionCall;
+import com.werner.compiler.ast.expressions.VariableExpression;
+import com.werner.compiler.ast.expressions.initializer.ArrayExpression;
+import com.werner.compiler.ast.expressions.literals.BooleanLiteral;
+import com.werner.compiler.ast.expressions.literals.IntLiteral;
+import com.werner.compiler.ast.expressions.literals.StringLiteral;
 import com.werner.compiler.ast.expressions.type.ArrayTypeExpression;
 import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
 import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
@@ -109,4 +114,31 @@ public class EmptyVisitor implements Visitor {
     public void visit(BinaryExpression binaryExpression) {
 
     }
+
+    @Override
+    public void visit(VariableExpression variableExpression) {
+
+    }
+
+    @Override
+    public void visit(BooleanLiteral booleanLiteral) {
+
+    }
+
+    @Override
+    public void visit(StringLiteral stringLiteral) {
+
+    }
+
+    @Override
+    public void visit(IntLiteral intLiteral) {
+
+    }
+
+    @Override
+    public void visit(ArrayExpression arrayExpression) {
+
+    }
+
+
 }

@@ -3,19 +3,24 @@ package com.werner.compiler.semanticanalysis;
 import com.werner.compiler.exceptions.CompilerError;
 import com.werner.compiler.semanticanalysis.info.Info;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 
 public class SymbolTable {
     public final Map<Symbol, Info> entries = new HashMap<>();
     public final Optional<SymbolTable> outerScope;
+    public Optional<HashMap<Symbol, SymbolTable>> innerScopes;
 
     public SymbolTable() {
         this.outerScope = Optional.empty();
+        this.innerScopes = Optional.empty();
     }
 
     public SymbolTable(SymbolTable innerSymbolTable) {
         this.outerScope = Optional.of(innerSymbolTable);
+        this.innerScopes = Optional.empty();
     }
 
     public Info lookup(Symbol name) {

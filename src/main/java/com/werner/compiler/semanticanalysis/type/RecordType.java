@@ -15,7 +15,20 @@ public class RecordType extends Type {
 
     @Override
     public boolean equals(Object obj) {
-        throw new UnsupportedOperationException("not implemented");
+        boolean isRecordType = obj instanceof RecordType;
+
+        if(isRecordType == false || ((RecordType) obj).recordTypes.size() != recordTypes.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < ((RecordType) obj).recordTypes.size(); i++) {
+            boolean typesMatch = recordTypes.get(i).equals(((RecordType) obj).recordTypes.get(i));
+            if (typesMatch == false) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override

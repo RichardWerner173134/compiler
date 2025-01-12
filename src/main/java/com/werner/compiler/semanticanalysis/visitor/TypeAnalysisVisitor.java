@@ -9,10 +9,7 @@ import com.werner.compiler.ast.expressions.initializer.ArrayExpression;
 import com.werner.compiler.ast.expressions.literals.BooleanLiteral;
 import com.werner.compiler.ast.expressions.literals.IntLiteral;
 import com.werner.compiler.ast.expressions.literals.StringLiteral;
-import com.werner.compiler.ast.expressions.type.AbstractTypeExpression;
-import com.werner.compiler.ast.expressions.type.ArrayTypeExpression;
-import com.werner.compiler.ast.expressions.type.NamedTypeExpression;
-import com.werner.compiler.ast.expressions.type.PrimitiveTypeExpression;
+import com.werner.compiler.ast.expressions.type.*;
 import com.werner.compiler.ast.statements.*;
 import com.werner.compiler.exceptions.CompilerError;
 import com.werner.compiler.semanticanalysis.Constants;
@@ -23,10 +20,7 @@ import com.werner.compiler.semanticanalysis.info.FunctionInfo;
 import com.werner.compiler.semanticanalysis.info.Info;
 import com.werner.compiler.semanticanalysis.info.ProcedureInfo;
 import com.werner.compiler.semanticanalysis.info.VariableInfo;
-import com.werner.compiler.semanticanalysis.type.ArrayType;
-import com.werner.compiler.semanticanalysis.type.NamedType;
-import com.werner.compiler.semanticanalysis.type.PrimitiveType;
-import com.werner.compiler.semanticanalysis.type.Type;
+import com.werner.compiler.semanticanalysis.type.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -300,17 +294,26 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
         }
 
         if (expression instanceof ArrayExpression) {
-            Expression indexSize = ((ArrayExpression) expression).indexSize;
-            Type indexType = getType(indexSize);
+            List<Expression> indexSizes = ((ArrayExpression) expression).indexSizes;
 
-            if (indexType.equals(PrimitiveType.INT_TYPE) == false) {
-                throw CompilerError.ArrayInitializationError(expression.location);
+            for (Expression indexSize : indexSizes) {
+                Type indexType = getType(indexSize);
+
+                if (indexType.equals(PrimitiveType.INT_TYPE) == false) {
+                    throw CompilerError.ArrayInitializationError(expression.location);
+                }
             }
 
             AbstractTypeExpression typeExpression = ((ArrayExpression) expression).typeExpression;
             Type expressionType = getType(typeExpression);
 
-            return new ArrayType(expressionType);
+            // wrap Arrays for arrays of arrays
+            Type result = new ArrayType(expressionType);
+            for (int i = 1; i < indexSizes.size(); i++) {
+                result = new ArrayType(result);
+            }
+
+            return result;
         }
 
         if (expression instanceof PrimitiveTypeExpression) {
@@ -375,6 +378,15 @@ public class TypeAnalysisVisitor extends EmptyVisitor {
             }
 
             return ((FunctionInfo)info).type;
+        }
+
+        if (expression instanceof RecordTypeExpression) {
+            List<Type> recordTypes = ((RecordTypeExpression) expression).variableDeclarations
+                    .stream()
+                    .map(declaration -> getType(declaration.typeExpression))
+                    .toList();
+
+            return new RecordType(recordTypes);
         }
 
         throw new UnsupportedOperationException("Expression has unknown Type. Please check implementation. Error at line=" + expression.location);

@@ -401,12 +401,16 @@ nonterminal         AbstractObjectInitialization    object_initialization;
                         {: RESULT = object_initialization; :}
                         ;
 
-    object_initialization ::=   ARRAY:array LSQUAREBRACKET:lsquarebracket expr:expression RSQUAREBRACKET:rsquarebracket OF type_expression:type_expression
-                            {: RESULT = new ArrayExpression(new ComplexSymbolFactory.Location(arrayleft, arrayright), expression, type_expression); :}
-                            |   ARRAY:array LSQUAREBRACKET:lsquarebracket expr:expression RSQUAREBRACKET:rsquarebracket OF IDENT:identifier
+    object_initialization ::=   ARRAY:array LSQUAREBRACKET expression_list:expression_list RSQUAREBRACKET OF type_expression:type_expression
                             {: RESULT = new ArrayExpression(
                                     new ComplexSymbolFactory.Location(arrayleft, arrayright),
-                                    expression,
+                                    expression_list,
+                                    type_expression
+                                ); :}
+                            |   ARRAY:array LSQUAREBRACKET expression_list:expression_list RSQUAREBRACKET OF IDENT:identifier
+                            {: RESULT = new ArrayExpression(
+                                    new ComplexSymbolFactory.Location(arrayleft, arrayright),
+                                    expression_list,
                                     new NamedTypeExpression(
                                         new ComplexSymbolFactory.Location(identifierleft, identifierright),
                                         new Identifier(new ComplexSymbolFactory.Location(identifierleft, identifierright), identifier)

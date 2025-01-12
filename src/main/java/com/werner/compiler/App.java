@@ -4,6 +4,7 @@ import com.werner.compiler.ast.Program;
 import com.werner.compiler.codesynthesis.CodeEmitter;
 import com.werner.compiler.codesynthesis.NameProvider;
 import com.werner.compiler.codesynthesis.ThreeAddressCodeTransformer;
+import com.werner.compiler.codesynthesis.javasynthesis.RecordClassContainer;
 import com.werner.compiler.generated.Lexer;
 import com.werner.compiler.generated.Parser;
 import com.werner.compiler.semanticanalysis.visitor.JavaSynthesisVisitor;
@@ -43,12 +44,13 @@ public class App
 
             // NameProvider nameProvider = new NameProvider();
             CodeEmitter codeEmitter = new CodeEmitter();
+            RecordClassContainer recordClassContainer = new RecordClassContainer();
             // ThreeAddressCodeTransformer threeAddressCodeTransformer = new ThreeAddressCodeTransformer(new NameProvider());
 
             // SynthesisVisitor synthesisVisitor = new SynthesisVisitor(outerNameAnalysisVisitor.symbolTable, codeEmitter, threeAddressCodeTransformer, nameProvider);
             // synthesisVisitor.visit(program);
 
-            JavaSynthesisVisitor javaSynthesisVisitor = new JavaSynthesisVisitor(outerNameAnalysisVisitor.symbolTable, codeEmitter);
+            JavaSynthesisVisitor javaSynthesisVisitor = new JavaSynthesisVisitor(outerNameAnalysisVisitor.symbolTable, codeEmitter, recordClassContainer);
             javaSynthesisVisitor.visit(program);
 
             System.out.println("\nPHASE 3 finished: Code Synthesis");

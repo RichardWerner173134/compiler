@@ -5,20 +5,23 @@ import com.werner.compiler.ast.expressions.type.AbstractTypeExpression;
 import com.werner.compiler.semanticanalysis.visitor.Visitor;
 import java_cup.runtime.ComplexSymbolFactory;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class ArrayExpression extends AbstractObjectInitialization {
 
-    public final Expression indexSize;
+    public final List<Expression> indexSizes;
 
     public final AbstractTypeExpression typeExpression;
 
     public ArrayExpression(
             ComplexSymbolFactory.Location location,
-            Expression indexSize,
+            List<Expression> indexSizes,
             AbstractTypeExpression typeExpression
     ) {
         super(location);
 
-        this.indexSize = indexSize;
+        this.indexSizes = indexSizes;
         this.typeExpression = typeExpression;
     }
 
@@ -34,8 +37,8 @@ public class ArrayExpression extends AbstractObjectInitialization {
 
         return result + "NewArr(\n"
 
-                + result + "\t" + "IndexSize(" + "\n"
-                + indexSize.print(depth + 2) + "\n"
+                + result + "\t" + "IndexSizes(" + "\n"
+                + indexSizes.stream().map(index -> index.print(depth + 2)).collect(Collectors.joining()) + "\n"
                 + result + "\t" + ")" + "\n"
 
                 + result + "\t" + "ElementType(" + "\n"

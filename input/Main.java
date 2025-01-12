@@ -1,9 +1,16 @@
 public class Main {
     public static void main(String[] args) {
-        int[] arr;
-        int x;
-        x = (42 + 8);
-        arr = new int[x];
+        Xxxxxx result;
         return;
+    }
+
+    public static Xxxxxx myFunc(Xxxxxx param) {
+        Xxxxxx result;
+        Xxxxxx[] arr;
+        return result;
+    }
+
+    class Xxxxxx {
+        public int fieldXXX;
     }
 }

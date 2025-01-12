@@ -1,9 +1,26 @@
 function main(args: array of string): void {
-
-    var arr: array of array of int;
-
-    arr = new array [42] of array[24] of int;
+    var result: record {
+        fieldXXX: int
+    };
 
     return;
+}
+
+type xxxxxx = record {
+    fieldXXX: int
+};
+
+function myFunc(param: record { fieldXXX: int }) : record {
+    fieldXXX: int
+} {
+    var result: record {
+        fieldXXX: int
+    };
+
+    var arr: array  of record {
+        fieldXXX: int
+    };
+
+    return result;
 }
 
